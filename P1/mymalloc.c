@@ -20,21 +20,22 @@ static void leak_checker(void){
     int objects = 0;
     int bytes = 0;
     struct node *header = (struct node *) heap.bytes;
-    int offset = header->size;
-    int totaloffset;
+    int offset = 8;
     for(int i = 0; i < MEMLENGTH; i += offset){
         offset = header->size;
         if(header->allocated){
             objects++;
             bytes += header->size;
+        }else{
+            offset = 8;
         }
-        totaloffset += offset;
-        header = (struct node *) (heap.bytes + totaloffset);
+        header = (struct node *) (heap.bytes + i);
     }
     if(objects == 0){
         return 0;
     }else{
         printf("mymalloc: %d bytes leaked in %d objects.", bytes, objects);
+        return 1;
     }
 }
 
