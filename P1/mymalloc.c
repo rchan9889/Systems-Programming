@@ -41,23 +41,81 @@ static void leak_checker(void){
 
 static void initialize_heap(void){
     initialized = 1;
+
+    struct node *first_header = (struct node *) heap.bytes;
+    first_header->size = MEMLENGTH - 8;
+
     atexit(leak_checker);
 }
 
 void *mymalloc(size_t size, char *file, int line){
+    int offset = 0;
+    size = (size + 7) & ~7
+    
     if(size <= 0){        
         printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
         return NULL;
     }
 
+    /*
     if(size > MEMLENGTH){
         printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
         return NULL;
     }
+    */
+
 
     if(!initialized) initialize_heap();
 
-    struct node *first_header = (struct node *) heap.bytes;
+    while (offset + 8 < MEMLENGTH) {
+        curr_header = (struct node *) (heap.bytes + offset)
+
+        // When current chunk isn't allocated and also big enough, we return first address in chunk 
+        // and make new header if we can
+        if (!(curr_header->allocated) && curr_header->size >= size)  { 
+            if ((offset + 8 + curr_header->size < MEMLENGTH) && curr_header->size > size) {
+                new_header = (struct node *) {heap.bytes + offset + 8 + size}
+                new_header->size = curr_header->size - size;
+            }
+            return curr_header;
+        }
+
+        // When current chunk isn't allocated but not big enough, we first check to see if we can coalesce
+        // with next chunk if it is also free
+        else if !(curr_header->allocated) {
+
+            // Check if current chunk is last chunk. If it is, not enough space in heap
+            if (offset + curr_header->size + 8 >= MEMLENGTH) {
+                printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+                return NULL;
+            }
+            else {
+                next_header = (struct node *) (heap.bytes + offset + curr_header->size + 8)
+
+                // Coalesces with next chunk if it is also not allocated
+                if !(next_header->allocated) {
+                    curr_header->size += (8 + next_header->size)
+                    // TODO: Code that deletes the next header
+                }
+            }
+
+        }
+        // This if statememt shows up twice, could probably clean up later
+        else if (offset + curr_header->size + 8 >= MEMLENGTH) {
+            printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+            return NULL;
+        }
+        else {
+            offset += (curr_header->size + 8)
+        }
+        // If we can't coalesce chunks or current chunk is already allocated, we move on to the next header
+        
+    }
+    // If it ever goes out of while loop, we know we don't have enough space anywhere
+    printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+    return NULL;
+
+    /*
     if(!(first_header->allocated)){
         first_header->allocated = 1;
         first_header->size = size;
@@ -73,6 +131,7 @@ void *mymalloc(size_t size, char *file, int line){
         header->size = size;
         return header;
     }
+    */
 
 }
 
