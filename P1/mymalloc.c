@@ -20,8 +20,8 @@ static void leak_checker(void){
     int objects = 0;
     int bytes = 0;
     struct node *header = (struct node *) heap.bytes;
-    int offset = 8;
-    for(int i = 0; i < MEMLENGTH; i += offset){
+    int offset = 0;
+    /* for(int i = 0; i < MEMLENGTH; i += offset){
         offset = header->size;
         if(header->allocated){
             objects++;
@@ -30,7 +30,15 @@ static void leak_checker(void){
             offset = 8;
         }
         header = (struct node *) (heap.bytes + i);
-    }
+    } */
+   while(offset < MEMLENGTH){
+        if(header->allocated){
+            objects++;
+            bytes += header->size;
+        }
+        offset += header->size + 8;
+        header = (struct node *) (heap.bytes + offset);
+   }
     if(objects == 0){
         return 0;
     }else{
@@ -50,39 +58,40 @@ static void initialize_heap(void){
 
 void *mymalloc(size_t size, char *file, int line){
     int offset = 0;
-    size = (size + 7) & ~7
+    size = (size + 7) & ~7;
     
     if(size <= 0){        
         printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
         return NULL;
     }
 
-    /*
     if(size > MEMLENGTH){
         printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
         return NULL;
     }
-    */
 
+    struct node *curr_header;
+    struct node *new_header;
+    struct node *next_header;
 
     if(!initialized) initialize_heap();
 
     while (offset + 8 < MEMLENGTH) {
-        curr_header = (struct node *) (heap.bytes + offset)
+        curr_header = (struct node *) (heap.bytes + offset);
 
         // When current chunk isn't allocated and also big enough, we return first address in chunk 
         // and make new header if we can
         if (!(curr_header->allocated) && curr_header->size >= size)  { 
             if ((offset + 8 + curr_header->size < MEMLENGTH) && curr_header->size > size) {
-                new_header = (struct node *) {heap.bytes + offset + 8 + size}
+                new_header = (struct node *) (heap.bytes + offset + 8 + size);
                 new_header->size = curr_header->size - size;
             }
-            return curr_header;
+            return (struct node *) (heap.bytes + offset + 8);
         }
 
         // When current chunk isn't allocated but not big enough, we first check to see if we can coalesce
         // with next chunk if it is also free
-        else if !(curr_header->allocated) {
+        else if (!(curr_header->allocated)) {
 
             // Check if current chunk is last chunk. If it is, not enough space in heap
             if (offset + curr_header->size + 8 >= MEMLENGTH) {
@@ -90,11 +99,11 @@ void *mymalloc(size_t size, char *file, int line){
                 return NULL;
             }
             else {
-                next_header = (struct node *) (heap.bytes + offset + curr_header->size + 8)
+                next_header = (struct node *) (heap.bytes + offset + curr_header->size + 8);
 
                 // Coalesces with next chunk if it is also not allocated
-                if !(next_header->allocated) {
-                    curr_header->size += (8 + next_header->size)
+                if (!(next_header->allocated)) {
+                    curr_header->size += (8 + next_header->size);
                     // TODO: Code that deletes the next header
                 }
             }
@@ -106,7 +115,7 @@ void *mymalloc(size_t size, char *file, int line){
             return NULL;
         }
         else {
-            offset += (curr_header->size + 8)
+            offset += (curr_header->size + 8);
         }
         // If we can't coalesce chunks or current chunk is already allocated, we move on to the next header
         
@@ -141,11 +150,12 @@ void myfree(void *ptr, char *file, int line){
         exit(2);
     }
 
-    struct node *header = ptr;
+    struct node *header = (struct node *) ptr - 8;
+
     if(!(header->allocated)){
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
         exit(2);
     }else{
-        
+        header->allocated = 0;
     }
 }
