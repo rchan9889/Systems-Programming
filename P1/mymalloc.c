@@ -17,7 +17,7 @@ struct node {
 
 static int initialized;
 
-static int leak_checker(void){
+static void leak_checker(void){
     int objects = 0;
     int bytes = 0;
     struct node *header = (struct node *) heap.bytes;
@@ -41,10 +41,10 @@ static int leak_checker(void){
         header = (struct node *) (heap.bytes + offset);
    }
     if(objects == 0){
-        return 0;
+        return;
     }else{
         printf("mymalloc: %d bytes leaked in %d objects.", bytes, objects);
-        return 1;
+        return;
     }
 }
 
@@ -152,13 +152,13 @@ void myfree(void *ptr, char *file, int line){
     }
 
     // Satisfies error type #1
-    if (ptr < heap.bytes + 8 || ptr > heap.bytes + MEMLENGTH) {
+    if ((intptr_t) ptr < (intptr_t) heap.bytes + 8 || (intptr_t) ptr > (intptr_t) heap.bytes + MEMLENGTH) {
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
         exit(2);
     }
 
     // Satisfies error type #2(?)
-    if (*(ptr - 8) == NULL || (intptr_t) ptr % 8 != 0) {
+    if ((intptr_t) ptr % 8 != 0) {
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
         exit(2);
     }
