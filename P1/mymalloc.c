@@ -150,7 +150,7 @@ void myfree(void *ptr, char *file, int line){
         exit(2);
     }
 
-    struct node *header = (struct node *) ptr - 8;
+    struct node *header = (struct node *) (ptr - 8);
 
     if(!(header->allocated)){
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
