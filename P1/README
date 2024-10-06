@@ -1,0 +1,24 @@
+Ryan Chan - rkc65
+Boyang Zhao - bz250
+
+test plan:
+1. Test for coalescing free blocks
+2. Test cases for individual errors
+    Malloc:
+    a. size <= 0
+    b. size > MEMLENGTH
+    c. size > remaining heap size
+        fill the heap with other malloc()
+        call malloc() in which the collective malloc() size is greater thahn 4096
+    Free:
+    d. heap not initialized
+        call free() without calling malloc() first
+    e. freeing an address not obtained from malloc()
+        call malloc()
+        call free() on another random variable
+    f. freeing address not at start of chunk
+        call malloc() i.e. x
+        call free(x + 1)
+    g. double freeing
+        call malloc()
+        call free() on the same address twice

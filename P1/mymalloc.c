@@ -1,7 +1,8 @@
-#include <stdint.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdint.h>
 #include "mymalloc.h"
 
 #define MEMLENGTH 4096
@@ -41,10 +42,8 @@ static void leak_checker(void){
         header = (struct node *) (heap.bytes + offset);
    }
     if(objects == 0){
-        return;
     }else{
         printf("mymalloc: %d bytes leaked in %d objects.", bytes, objects);
-        return;
     }
 }
 
@@ -83,10 +82,13 @@ void *mymalloc(size_t size, char *file, int line){
         // When current chunk isn't allocated and also big enough, we return first address in chunk 
         // and make new header if we can
         if (!(curr_header->allocated) && curr_header->size >= size)  { 
-            if ((offset + 8 + curr_header->size < MEMLENGTH) && curr_header->size > size) {
+            if ((offset + 8 + curr_header->size <= MEMLENGTH) && curr_header->size > size) {
                 new_header = (struct node *) (heap.bytes + offset + 8 + size);
                 new_header->size = curr_header->size - size;
             }
+            struct node *head = (struct node *) (heap.bytes + offset);
+            head->allocated = 1;
+            head->size = size;
             return (struct node *) (heap.bytes + offset + 8);
         }
 
