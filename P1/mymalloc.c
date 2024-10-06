@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -16,7 +17,7 @@ struct node {
 
 static int initialized;
 
-static void leak_checker(void){
+static int leak_checker(void){
     int objects = 0;
     int bytes = 0;
     struct node *header = (struct node *) heap.bytes;
@@ -145,13 +146,26 @@ void *mymalloc(size_t size, char *file, int line){
 }
 
 void myfree(void *ptr, char *file, int line){
-    if(initialized == NULL){
+    if(initialized == 0){
+        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        exit(2);
+    }
+
+    // Satisfies error type #1
+    if (ptr < heap.bytes + 8 || ptr > heap.bytes + MEMLENGTH) {
+        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        exit(2);
+    }
+
+    // Satisfies error type #2(?)
+    if (*(ptr - 8) == NULL || (intptr_t) ptr % 8 != 0) {
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
         exit(2);
     }
 
     struct node *header = (struct node *) (ptr - 8);
-
+    
+    // Satisfies error type #3
     if(!(header->allocated)){
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
         exit(2);
