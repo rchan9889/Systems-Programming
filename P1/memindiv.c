@@ -48,7 +48,7 @@ int main(int argc, char **argv){
         free(test3a);
     }
     if (test3b != NULL) {
-        printf("Error: memory was allocated when should have returned NULL);
+        printf("Error: memory was allocated when should have returned NULL\n");
         free(test3b);
     }
 
