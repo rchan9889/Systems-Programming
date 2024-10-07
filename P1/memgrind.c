@@ -61,6 +61,6 @@ int main(int argc, char **argv){
     }
     gettimeofday(&fin, &est);
     int time = (fin.tv_usec - start.tv_usec)/50;
-    printf("Average microseconds elapsed: %d", time);
+    printf("Average microseconds elapsed: %d\n", time);
     return 0;
 }
