@@ -61,14 +61,24 @@ int main(int argc, char **argv){
         char *test4[120]
         for (int i = 0; i < 120; i++) {
             test4[i] = malloc(sizeof(char));
-            printf("Address at index %d is %p\n", i, test4[i]);
         }
+        printf("Starting address for first chunk is at %p\n", test4[0]);
+        
         for (int i = 0; i < 120; i++) {
             free(test4[i]);
         }
         char* test4b = malloc(100 * sizeof(char));
         printf("Starting address for longer chunk is at %p\n", test4b);
         free(test4b);
+
+        //Task 5 - Checking individual errors
+        //Task 5a - Size <= 0
+        printf("Test 5a:\n");
+        char* test5a = malloc(0);
+        //Task 5b - Size greater than size of heap (4096 bytes)
+        printf("Test 5b:\n");
+        char* test5b = malloc(4097);
+        
         
     }
     gettimeofday(&fin, &est);
