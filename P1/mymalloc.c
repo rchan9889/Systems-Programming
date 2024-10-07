@@ -43,7 +43,7 @@ static void leak_checker(void){
    }
     if(objects == 0){
     }else{
-        printf("mymalloc: %d bytes leaked in %d objects.", bytes, objects);
+        printf("mymalloc: %d bytes leaked in %d objects.\n", bytes, objects);
     }
 }
 
@@ -61,12 +61,12 @@ void *mymalloc(size_t size, char *file, int line){
     size = (size + 7) & ~7;
     
     if(size <= 0){        
-        printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+        printf("malloc: Unable to allocate %zu bytes (%c:%d)\n", size, *file, line);
         return NULL;
     }
 
     if(size > MEMLENGTH){
-        printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+        printf("malloc: Unable to allocate %zu bytes (%c:%d)\n", size, *file, line);
         return NULL;
     }
 
@@ -98,7 +98,7 @@ void *mymalloc(size_t size, char *file, int line){
 
             // Check if current chunk is last chunk. If it is, not enough space in heap
             if (offset + curr_header->size + 8 >= MEMLENGTH) {
-                printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+                printf("malloc: Unable to allocate %zu bytes (%c:%d)\n", size, *file, line);
                 return NULL;
             }
             else {
@@ -114,7 +114,7 @@ void *mymalloc(size_t size, char *file, int line){
         }
         // This if statememt shows up twice, could probably clean up later
         else if (offset + curr_header->size + 8 >= MEMLENGTH) {
-            printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+            printf("malloc: Unable to allocate %zu bytes (%c:%d)\n", size, *file, line);
             return NULL;
         }
         else {
@@ -124,7 +124,7 @@ void *mymalloc(size_t size, char *file, int line){
         
     }
     // If it ever goes out of while loop, we know we don't have enough space anywhere
-    printf("malloc: Unable to allocate %zu bytes (%c:%d)", size, *file, line);
+    printf("malloc: Unable to allocate %zu bytes (%c:%d)\n", size, *file, line);
     return NULL;
 
     /*
@@ -149,24 +149,24 @@ void *mymalloc(size_t size, char *file, int line){
 
 void myfree(void *ptr, char *file, int line){
     if(initialized == 0){
-        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        printf("free: Inappropriate pointer (%c:%d)\n", *file, line);
         exit(2);
     }
 
     if(ptr == NULL){
-        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        printf("free: Inappropriate pointer (%c:%d)\n", *file, line);
         exit(2);
     }
 
     // Satisfies error type #1
     if ((intptr_t) ptr < (intptr_t) heap.bytes + 8 || (intptr_t) ptr > (intptr_t) heap.bytes + MEMLENGTH) {
-        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        printf("free: Inappropriate pointer (%c:%d)\n", *file, line);
         exit(2);
     }
 
     // Satisfies error type #2(?)
     if ((intptr_t) ptr % 8 != 0) {
-        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        printf("free: Inappropriate pointer (%c:%d)\n", *file, line);
         exit(2);
     }
 
@@ -174,7 +174,7 @@ void myfree(void *ptr, char *file, int line){
     
     // Satisfies error type #3
     if(!(header->allocated)){
-        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        printf("free: Inappropriate pointer (%c:%d)\n", *file, line);
         exit(2);
     }else{
         header->allocated = 0;
