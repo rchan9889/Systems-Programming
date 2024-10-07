@@ -10,6 +10,7 @@
 #endif
 
 int main(int argc, char **argv){
+    printf("NOTE: Since calling free incorrectly automatically terminates the program, comment out tests 4-7 to test the other free test cases.\n");
     //Testing individual errors
     //Test 1 - Size <= 0
   
@@ -53,18 +54,21 @@ int main(int argc, char **argv){
     }
 
     //Test 4 - Heap not initialized
+    printf("Test 4: freeing memory before it was allocated\n");
     char *test4;
     free(test4);
 
     //Test 5 - Freeing an address not obtained from malloc()
+    printf("Test 5 - Freeing an address not obtained from malloc\n");
     char *test5a = malloc(sizeof(char));
-    char *test5b
+    char *test5b;
     free(test5b);
     if (test5a != NULL) {
         free(test5a);
     }
 
     //Test 6 - Freeing address not at start of chunk
+    printf("Test 6 - Freeing an address not at start of chunk\n");
     char *test6 = malloc(sizeof(char));
     free(test6 + 1);
     if (test6 != NULL) {
@@ -72,6 +76,7 @@ int main(int argc, char **argv){
     }
 
     //Test 7 - Double freeing
+    printf("Test 7 - Freeing a chunk twice\n");
     char *test7 = malloc(sizeof(char));
     free(test7);
     free(test7);
