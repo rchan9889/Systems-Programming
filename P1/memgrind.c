@@ -50,27 +50,31 @@ int main(int argc, char **argv){
                 allocated[random2] = 0;
             }
         }
-        //free remainig allocated objects
+        //free remaining allocated objects
         for(int i = 0; i < 120; i++){
             if(allocated[i]){
                 free(test3[i]);
             }
         }
         //TODO task 4 and 5
-        //task 4 - Coalescing free chunks
+        //task 4
         char *test4[120]
-        for (int i = 0; i < 120; i++) {
+        //allocate 60 objects
+        for (int i = 0; i < 60; i++) {
             test4[i] = malloc(sizeof(char));
         }
-        printf("Starting address for first chunk is at %p\n", test4[0]);
-        
-        for (int i = 0; i < 120; i++) {
+        //free 30 of the 60 objecets
+        for (int i = 30; i < 60; i++) {
             free(test4[i]);
         }
-        char* test4b = malloc(100 * sizeof(char));
-        printf("Starting address for longer chunk is at %p\n", test4b);
-        free(test4b);
-
+        //allocate another 60 objects
+        for (int i = 30; i < 90; i++){
+            test4[i] = malloc(sizeof(char));
+        }
+        //free everything
+        for (int i = 0; i < 90; i++){
+            free(test4[i]);
+        }
         //Task 5 - Checking individual errors
         //Task 5a - Size <= 0
         printf("Test 5a:\n");
