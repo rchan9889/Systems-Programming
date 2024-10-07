@@ -153,6 +153,11 @@ void myfree(void *ptr, char *file, int line){
         exit(2);
     }
 
+    if(ptr == NULL){
+        printf("free: Inappropriate pointer (%c:%d)", *file, line);
+        exit(2);
+    }
+
     // Satisfies error type #1
     if ((intptr_t) ptr < (intptr_t) heap.bytes + 8 || (intptr_t) ptr > (intptr_t) heap.bytes + MEMLENGTH) {
         printf("free: Inappropriate pointer (%c:%d)", *file, line);
