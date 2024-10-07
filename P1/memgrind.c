@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/time.h>
 #include "mymalloc.c"
 
 #ifndef REALMALLOC
@@ -9,7 +10,10 @@
 #endif
 
 int main(int argc, char **argv){
-    int start = gettimeofday();
+    struct timeval start;
+    struct timeval fin;
+    struct timezone est;
+    gettimeofday(&start, %est);
     for(int i = 0; i < 50; i++){
         //task 1
         char *test1[120];
@@ -55,8 +59,8 @@ int main(int argc, char **argv){
         //TODO task 4 and 5
         //tast 4
     }
-    int fin = gettimeofday();
-    int time = (fin - start)/50;
-    printf("%d", time);
+    gettimeofday(&fin, %est);
+    int time = (fin.tv_usec - start.tv_usec)/50;
+    printf("Average microseconds elapsed: %d", time);
     return 0;
 }
