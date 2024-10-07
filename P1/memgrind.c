@@ -57,7 +57,19 @@ int main(int argc, char **argv){
             }
         }
         //TODO task 4 and 5
-        //tast 4
+        //task 4 - Coalescing free chunks
+        char *test4[120]
+        for (int i = 0; i < 120; i++) {
+            test4[i] = malloc(sizeof(char));
+            printf("Address at index %d is %p\n", i, test4[i]);
+        }
+        for (int i = 0; i < 120; i++) {
+            free(test4[i]);
+        }
+        char* test4b = malloc(100 * sizeof(char));
+        printf("Starting address for longer chunk is at %p\n", test4b);
+        free(test4b);
+        
     }
     gettimeofday(&fin, &est);
     int time = (fin.tv_usec - start.tv_usec)/50;
