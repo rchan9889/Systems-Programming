@@ -10,6 +10,7 @@
 #endif
 
 int main(int argc, char **argv){
+    printf("NOTE: Since calling free incorrectly automatically terminates the program, comment out tests 4-7 to test the other free test cases.\n");
     //Testing individual errors
     //Test 1 - Size <= 0
   
