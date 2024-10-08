@@ -37,7 +37,7 @@ int main(int argc, char **argv){
         int allocated[120];
         for(int i = 0; i < 120;){
             //Generates a random number, either 0 or 1
-            int random1 = rand() % 1;
+            int random1 = rand() % 2;
             if(random1 == 0){
                 //if 0, allocate
                 test3[i] = malloc(sizeof(char));
@@ -47,7 +47,7 @@ int main(int argc, char **argv){
             }else{
                 //else, free
                 //Generates a random number between 0 and i, inclusively
-                int random2 = rand() % i;
+                int random2 = rand() % (i + 1);
                 free(test3[random2]);
                 allocated[random2] = 0;
             }
@@ -79,27 +79,13 @@ int main(int argc, char **argv){
         }
 
         //Task 5
-        //Uses malloc and free to find all prime numbers below 100
+        //Tests malloc with different types
         int *test5 = malloc(100 * sizeof(int));
-        test5[0] = 0;
-        test5[1] = 0;
-        test5[2] = 1;
-        for (int i = 3; i < 100; i++) {
-            test5[i] = 1;
-            for (int j = 2; j <= i / 2; j++) {
-                if (i % j == 0) {
-                    test5[i] = 0;
-                }
-            }
-        }
-        printf("Prime numbers below 100:\n");
-        for (int i = 2; i < 100; i++) {
-            if (test5[i] == 1) {
-                printf("%d ", i);
-            }    
-        }
+
+
         
-        printf("\n");
+        
+        
         free(test5);
         
         printf("Test: %d\n", k);
