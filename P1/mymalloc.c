@@ -84,7 +84,7 @@ void *mymalloc(size_t size, char *file, int line){
         if (!(curr_header->allocated) && curr_header->size >= size)  { 
             if ((offset + 8 + curr_header->size <= MEMLENGTH) && curr_header->size > size) {
                 new_header = (struct node *) (heap.bytes + offset + 8 + size);
-                new_header->size = curr_header->size - size;
+                new_header->size = curr_header->size - size - 8;
             }
             struct node *head = (struct node *) (heap.bytes + offset);
             head->allocated = 1;
