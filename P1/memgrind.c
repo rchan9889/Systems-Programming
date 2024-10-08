@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <math.h>
+#include <sys/time.h>
 #include "mymalloc.c"
 
 #ifndef REALMALLOC
@@ -14,7 +14,7 @@ int main(int argc, char **argv){
     struct timeval fin;
     struct timezone est;
     gettimeofday(&start, &est);
-    for(int i = 0; i < 50; i++){
+    for(int k = 0; k < 50; i++){
         //task 1
         char *test1[120];
         for(int i = 0; i < 120; i++){
@@ -60,7 +60,7 @@ int main(int argc, char **argv){
         }
         
         //Task 4
-        char *test4[120]
+        char *test4[120];
         //allocate 60 objects
         for (int i = 0; i < 60; i++) {
             test4[i] = malloc(sizeof(char));
@@ -86,7 +86,7 @@ int main(int argc, char **argv){
         test5[2] = 1;
         for (int i = 3; i < 100; i++) {
             test5[i] = 1;
-            for (int j = 2; j <= (int) sqrt((double); j++) {
+            for (int j = 2; j <= i / 2; j++) {
                 if (i % j == 0) {
                     test5[i] = 0;
                 }
@@ -99,7 +99,7 @@ int main(int argc, char **argv){
             }    
         }
         
-        print("\n");
+        printf("\n");
         free(test5);
         
         
