@@ -14,7 +14,7 @@ int main(int argc, char **argv){
     struct timeval fin;
     struct timezone est;
     gettimeofday(&start, &est);
-    for(int k = 0; k < 50; i++){
+    for(int k = 0; k < 50; k++){
         //task 1
         char *test1[120];
         for(int i = 0; i < 120; i++){
@@ -102,7 +102,7 @@ int main(int argc, char **argv){
         printf("\n");
         free(test5);
         
-        
+        printf("Test: %d\n", k);
         
     }
     gettimeofday(&fin, &est);
