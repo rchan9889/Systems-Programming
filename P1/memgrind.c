@@ -82,7 +82,7 @@ int main(int argc, char **argv){
         //Uses malloc and free to find all prime numbers below 100
         int *test5 = malloc(100 * sizeof(int));
         
-	test5[0] = 0;
+	    test5[0] = 0;
         test5[1] = 0;
         test5[2] = 1;
         for (int i = 3; i < 100; i++) {
@@ -102,7 +102,7 @@ int main(int argc, char **argv){
         
         printf("\n");
 	
-	free(test5);
+	    free(test5);
         
         //printf("Test: %d\n", k);
         
