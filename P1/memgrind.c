@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/time.h>
+#include <math.h>
 #include "mymalloc.c"
 
 #ifndef REALMALLOC
@@ -21,6 +21,7 @@ int main(int argc, char **argv){
             test1[i] = malloc(sizeof(char));
             free(test1[i]);
         }
+        
         //task 2
         char *test2[120];
         for(int i = 0; i < 120; i++){
@@ -29,6 +30,7 @@ int main(int argc, char **argv){
         for(int i = 0; i < 120; i++){
             free(test2[i]);
         }
+        
         //task 3
         char *test3[120];
         //array to keep track of what is freed and what is not
@@ -56,8 +58,8 @@ int main(int argc, char **argv){
                 free(test3[i]);
             }
         }
-        //TODO task 4 and 5
-        //task 4
+        
+        //Task 4
         char *test4[120]
         //allocate 60 objects
         for (int i = 0; i < 60; i++) {
@@ -75,13 +77,31 @@ int main(int argc, char **argv){
         for (int i = 0; i < 90; i++){
             free(test4[i]);
         }
-        //Task 5 - Checking individual errors
-        //Task 5a - Size <= 0
-        printf("Test 5a:\n");
-        char* test5a = malloc(0);
-        //Task 5b - Size greater than size of heap (4096 bytes)
-        printf("Test 5b:\n");
-        char* test5b = malloc(4097);
+
+        //Task 5
+        //Uses malloc and free to find all prime numbers below 100
+        int *test5 = malloc(100 * sizeof(int));
+        test5[0] = 0;
+        test5[1] = 0;
+        test5[2] = 1;
+        for (int i = 3; i < 100; i++) {
+            test5[i] = 1;
+            for (int j = 2; j <= (int) sqrt((double); j++) {
+                if (i % j == 0) {
+                    test5[i] = 0;
+                }
+            }
+        }
+        printf("Prime numbers below 100:\n");
+        for (int i = 2; i < 100; i++) {
+            if (test5[i] == 1) {
+                printf("%d ", i);
+            }    
+        }
+        
+        print("\n");
+        free(test5);
+        
         
         
     }
