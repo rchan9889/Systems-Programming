@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv){
     //Testing coalescing chunks in memory
-    char *test1a[120]
+    char *test1a[120];
     for (int i = 0; i < 120; i++) {
         test1a[i] = malloc(sizeof(char));
     }
