@@ -135,6 +135,39 @@ void updateDict(char **wordList) {
     }
 }
 
+void get_lines(int fd) {
+    char buf[128];
+    char *line = NULL;
+    int linelength = 0;
+    int segstart, bytes;
+    while ((bytes = read(fd, buf, 128)) > 0) {
+        int pos;
+        segstart = 0;
+        for (pos = 0; pos < bytes; pos++) {
+            if (buf[pos] == '\n') {
+                int seglength = pos - segstart;
+                line = realloc(line, linelength + seglength + 1);
+                memcpy(line + linelength, buf + segstart, seglength);
+                line[linelength + seglength] = '\0';
+                updateDict(split(line));
+                segstart = pos + 1;
+                line = NULL;
+                linelength = 0;
+            }
+        }
+        if (segstart < pos) {
+            int seglength = pos - segstart;
+            line = realloc(line, linelength + seglength + 1);
+            memcpy(line + linelength, buf + segstart, seglength);
+            linelength += seglength;
+            line[linelength] = '\0';
+        }
+    }
+    if (line) {
+        updateDict(split(line));
+    }
+}
+
 void traverse(char *path) {
     int pathlen = strlen(path);
     char *fpath;
@@ -177,7 +210,8 @@ void traverse(char *path) {
     closedir(dp);
 }
 int main(int argc, char **argv){
-
+    char* fileName = 'beemovie.txt';
+    int fd = open(fileName, O_RDWR);
 
 
     dict_node *sortedHead = NULL; //We've sorted lexicographically, but now we need to sort numerically too
