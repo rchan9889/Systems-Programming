@@ -64,7 +64,7 @@ char **split(const char *input) {
         
     }
 
-    int num_words = count_spaces(s)
+    int num_words = count_spaces(s);
     char **result = malloc(sizeof(char *) * num_words + 1);
 
     int j = 0;
@@ -91,7 +91,7 @@ void updateDict(char **wordList) {
             head->next = NULL;
         }
         else {
-            if (strcmp(*s, head->word->name) < 0) { // If current word goes before current head
+            if (strcmp(*s, head->word.name) < 0) { // If current word goes before current head
                 dict_node *newHead = (dict_node*)malloc(sizeof(dict_node));
                 newHead->word.name = malloc(sizeof(char) * sizeof(*s) + 1);
                 strcpy(newHead->word.name, *s);
