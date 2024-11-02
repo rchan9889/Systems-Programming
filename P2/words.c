@@ -184,34 +184,37 @@ void traverse(char *path) {
             continue;
         }
 
-            printf("%s\n", de->d_name);
+        printf("%s\n", de->d_name);
 
-            int namelen = strlen(de->d_name);
-            fpath = (char *) malloc(pathlen + 1 + namelen + 1);
-            memcpy(fpath, path, pathlen);
-            fpath[pathlen] = '/';
-            memcpy(fpath + pathlen + 1, de->d_name, namelen + 1);
-            printf("%s\n", fpath);
+        int namelen = strlen(de->d_name);
+        fpath = (char *) malloc(pathlen + 1 + namelen + 1);
+        memcpy(fpath, path, pathlen);
+        fpath[pathlen] = '/';
+        memcpy(fpath + pathlen + 1, de->d_name, namelen + 1);
+        printf("%s\n", fpath);
 
-            struct stat sb;
-            stat(fpath, &sb);
-            if (S_ISDIR(sb.st_mode)) {
-                traverse(fpath);
-            }
-            else if (S_ISREG(sb.st_mode)) {
-                char **wordList = split(fpath);
-            }
-            else {
-                return;
-            }
+        struct stat sb;
+        stat(fpath, &sb);
+        if (S_ISDIR(sb.st_mode)) {
+            traverse(fpath);
+        }
+        else if (S_ISREG(sb.st_mode)) {
+            int fd = open(fpath, O_RDWR);
+            //char **wordList = split();
+        }
+        else {
+            return;
+        }
+
         free(fpath);
     }
 
     closedir(dp);
 }
 int main(int argc, char **argv){
-    char* fileName = 'beemovie.txt';
-    int fd = open(fileName, O_RDWR);
+    for (int i = 0; i < argc; i++) {
+        traverse(argv[i]);
+    }
 
 
     dict_node *sortedHead = NULL; //We've sorted lexicographically, but now we need to sort numerically too
@@ -259,9 +262,26 @@ int main(int argc, char **argv){
             }
         }
     }
-
-    // Now we can finally print
-    for (dict_node *sortedCurr = sortedHead; sortedCurr; sortedCurr = sortedCurr->next) {
+    
+    // Now we can finally print while also freeing node by node after
+    for (dict_node *sortedCurr = sortedHead; sortedCurr; ;) {
         printf("%s %d\n", sortedCurr->word.name, sortedCurr->word.count);
+        dict_node *nextSortedNode = sortedCurr->next;
+        free(sortedCurr->word.name);
+        free(sortedCurr->word);
+        free(sortedCurr);
+        sortedCurr = nextSortedNode;
     }
+
+    
+    
 }
+// Since head is a global variable we free it out here
+
+for (dict_node *tempNode = head; tempNode; ;) {
+        dict_node *nextNode = tempNode->next;
+        free(tempNode->word.name);
+        free(tempNode->word);
+        free(tempNode);
+        tempNode = nextNode;
+    }
