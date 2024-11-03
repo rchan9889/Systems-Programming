@@ -56,6 +56,9 @@ char **split(const char *input) {
             }
         }
         else if (s[i] == 39) { // Current letter is an apostrophe
+            printf("Current Test case going on\n");
+            printf("Previous letter(Likely a space): %c\n", s[i-1]);
+            printf("Next letter(Likely a space): %c\n", s[i+1]);
             if (!(s[i-1] < 65 || ((s[i-1] > 90 && s[i-1] < 97) || s[i-1] > 122))) {
                 continue;
             }
