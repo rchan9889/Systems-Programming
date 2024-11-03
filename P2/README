@@ -1,0 +1,11 @@
+Ryan Chan - rkc65  
+Boyang Zhao - bz250
+
+test plan:
+1. testa - example test prompt
+2. testb, testc, & junk - traverse through one directory, read text file inside said directory, ignore non .txt file
+3. testd, teste - traverse through subdirectory in directory testb and read text file
+4. testf - test for very long text file (Bee Move script should be long enough)
+5. testg, testh - ignore subdirectory testg as begins with .
+6. testi - test for weird cases involving apostrophes and hyphens
+7. testk - random assortment of numbers, cannot figure out why the output appears to be 0-3 random characters, when numbers    are changed, there is no output (as should be according to instructions)

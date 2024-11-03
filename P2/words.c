@@ -56,9 +56,9 @@ char **split(const char *input) {
             }
         }
         else if (s[i] == 39) { // Current letter is an apostrophe
-            printf("Current Test case going on\n");
+            /* printf("Current Test case going on\n");
             printf("Previous letter(Likely a space): %c\n", s[i-1]);
-            printf("Next letter(Likely a space): %c\n", s[i+1]);
+            printf("Next letter(Likely a space): %c\n", s[i+1]); */
             if (!(s[i-1] < 65 || ((s[i-1] > 90 && s[i-1] < 97) || s[i-1] > 122))) {
                 continue;
             }
@@ -66,7 +66,7 @@ char **split(const char *input) {
                 continue;
             }
             else {
-                printf("\tCurrent apostrophe replaced with space.\n");
+                //printf("\tCurrent apostrophe replaced with space.\n");
                 s[i] = ' ';
             }
         }
@@ -206,14 +206,14 @@ void traverse(char *path) {
         }
         
 
-        printf("%s\n", de->d_name);
+        //printf("%s\n", de->d_name);
 
         int namelen = strlen(de->d_name);
         fpath = (char *) malloc(pathlen + 1 + namelen + 1);
         memcpy(fpath, path, pathlen);
         fpath[pathlen] = '/';
         memcpy(fpath + pathlen + 1, de->d_name, namelen + 1);
-        printf("%s\n", fpath);
+        //printf("%s\n", fpath);
 
         struct stat sb;
         stat(fpath, &sb);
@@ -239,7 +239,7 @@ void traverse(char *path) {
     closedir(dp);
 }
 int main(int argc, char **argv){
-    for (int i = 0; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
         traverse(argv[i]);
     }
 
@@ -291,7 +291,7 @@ int main(int argc, char **argv){
     }
     
     // Now we can finally print while also freeing node by node after
-    for (dict_node *sortedCurr = sortedHead; sortedCurr; sortedCurr = sortedCurr;) {
+    for (dict_node *sortedCurr = sortedHead; sortedCurr;) {
         printf("%s %d\n", sortedCurr->word.name, sortedCurr->word.count);
         dict_node *nextSortedNode = sortedCurr->next;
         free(sortedCurr->word.name);
@@ -300,7 +300,7 @@ int main(int argc, char **argv){
     }
 
     
-    for (dict_node *tempNode = head; tempNode; tempNode = tempNode;) {
+    for (dict_node *tempNode = head; tempNode;) {
         dict_node *nextNode = tempNode->next;
         free(tempNode->word.name);
         free(tempNode);
