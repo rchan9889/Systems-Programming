@@ -165,6 +165,19 @@ char *get_lines(int fd) {
 }
 
 void traverse(char *path) {
+    struct stat sbb;
+    stat(path, &sbb);
+    if (S_ISREG(sbb.st_mode)) {
+        if (strlen(path) < 4) return;
+        if (strcmp(path + strlen(path) - 4, ".txt") != 0) {
+            return;
+        }
+        int fd = open(path, O_RDWR);
+        char **wordList = split(get_lines(fd));
+        updateDict(wordList);
+        return;
+    }
+
     int pathlen = strlen(path);
     char *fpath;
     DIR *dp = opendir(path);
