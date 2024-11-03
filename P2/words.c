@@ -144,7 +144,7 @@ char *get_lines(int fd) {
         int pos;
         //segstart = 0;
         for (pos = 0; pos < bytes; pos++) {
-            if (buf[pos] == (char *)NULL) {
+            if (!buf[pos]) {
                 //int seglength = pos - segstart;
                 text = realloc(text, filelength + pos + 1);
                 memcpy(text + filelength, buf, pos);
@@ -179,6 +179,7 @@ void traverse(char *path) {
         if (de->d_name[0] == '.') {
             continue;
         }
+        
 
         printf("%s\n", de->d_name);
 
@@ -195,6 +196,10 @@ void traverse(char *path) {
             traverse(fpath);
         }
         else if (S_ISREG(sb.st_mode)) {
+            if (strlen(de->d_name) < 4) continue;
+            if (strcmp(de->d_name + strlen(de->d_name) - 4, ".txt") != 0) {
+                continue;
+            }
             int fd = open(fpath, O_RDWR);
             char **wordList = split(get_lines(fd));
             updateDict(wordList);
