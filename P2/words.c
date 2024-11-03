@@ -66,6 +66,7 @@ char **split(const char *input) {
                 continue;
             }
             else {
+                printf("\tCurrent apostrophe replaced with space.\n");
                 s[i] = ' ';
             }
         }
