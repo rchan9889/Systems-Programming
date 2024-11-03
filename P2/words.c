@@ -57,9 +57,12 @@ char **split(const char *input) {
         }
         else if (s[i] == 39) { // Current letter is an apostrophe
             if (!(s[i-1] < 65 || ((s[i-1] > 90 && s[i-1] < 97) || s[i-1] > 122))) {
-                s[i] = ' ';
+                continue;
             }
             else if (!(s[i+1] < 65 || ((s[i+1] > 90 && s[i+1] < 97) || s[i+1] > 122))) {
+                continue;
+            }
+            else {
                 s[i] = ' ';
             }
         }
