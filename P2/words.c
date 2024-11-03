@@ -139,29 +139,29 @@ char *get_lines(int fd) {
     char buf[128];
     char *text = NULL;
     int filelength = 0;
-    //int segstart, bytes;
+    int bytes;
     while ((bytes = read(fd, buf, 128)) > 0) {
         int pos;
         //segstart = 0;
         for (pos = 0; pos < bytes; pos++) {
-            if (buf[pos] == NULL) {
+            if (buf[pos] == (char *)NULL) {
                 //int seglength = pos - segstart;
-                line = realloc(line, filelength + pos + 1);
-                memcpy(line + filelength, buf, pos);
-                line[filelength + pos] = '\0';
-                //updateDict(split(line));
+                text = realloc(text, filelength + pos + 1);
+                memcpy(text + filelength, buf, pos);
+                text[filelength + pos] = '\0';
+                //updateDict(split(text));
                 
-                return line;
+                return text;
             }
         }
-        line = realloc(line, filelength + 129);
-        memcpy(line + filelength, buf, 128);
+        text = realloc(text, filelength + 129);
+        memcpy(text + filelength, buf, 128);
         filelength += 128;
     }
-    if (line) {
-        line[filelength] = '\0';
+    if (text) {
+        text[filelength] = '\0';
     }
-    return line;
+    return text;
 }
 
 void traverse(char *path) {
@@ -261,24 +261,21 @@ int main(int argc, char **argv){
     }
     
     // Now we can finally print while also freeing node by node after
-    for (dict_node *sortedCurr = sortedHead; sortedCurr; ;) {
+    for (dict_node *sortedCurr = sortedHead; sortedCurr; sortedCurr = sortedCurr;) {
         printf("%s %d\n", sortedCurr->word.name, sortedCurr->word.count);
         dict_node *nextSortedNode = sortedCurr->next;
         free(sortedCurr->word.name);
-        free(sortedCurr->word);
         free(sortedCurr);
         sortedCurr = nextSortedNode;
     }
 
     
-    
-}
-// Since head is a global variable we free it out here
-
-for (dict_node *tempNode = head; tempNode; ;) {
+    for (dict_node *tempNode = head; tempNode; tempNode = tempNode;) {
         dict_node *nextNode = tempNode->next;
         free(tempNode->word.name);
-        free(tempNode->word);
         free(tempNode);
         tempNode = nextNode;
     }
+}
+
+
