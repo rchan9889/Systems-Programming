@@ -28,7 +28,7 @@ int main(int arc, char *argv){
             printf("mysh> ");
             char command[40];
             fgets(command, sizeof(command), stdin);
-            if(command[0] == 'c' && command[1] == 'd' && (command[2] == ' ' || command[2] == NULL)){ //cd fix, I dunno how
+            if(command[0] == 'c' && command[1] == 'd' && (command[2] == ' ' || command[2] == 10)){ //cd fix, I dunno how
                 char path[PATH_MAX];
                 int i = 3;
                 while(command[i]){
