@@ -28,16 +28,18 @@ int main(int arc, char *argv){
             printf("mysh> ");
             char command[40];
             fgets(command, sizeof(command), stdin);
-            if(command[0] == 'c' && command[1] == 'd' && (command[2] == ' ' || command[2] == 10)){ //cd fix, I dunno how
+            if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd fix, I dunno how
                 char path[PATH_MAX];
                 int i = 3;
                 while(command[i]){
-                    path[i - 3] = command[i];
-                    i++;
+                    if (command[i] != 10) {
+                        path[i - 3] = command[i];
+                        i++;
+                    }
                 }
                 printf("%s\n", path);
 
-                if(chdir(path) == 0){
+                if(chdir(path) == -1){
                     printf("cd: No such file or directory\n");
                 }else{
                     char cwd[PATH_MAX];
