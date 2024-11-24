@@ -34,8 +34,8 @@ int main(int arc, char *argv){
                 while(command[i]){
                     if (command[i] != 10) {
                         path[i - 3] = command[i];
-                        i++;
                     }
+                    i++;
                 }
                 printf("%s\n", path);
 
