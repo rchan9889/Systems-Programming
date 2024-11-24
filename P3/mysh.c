@@ -26,7 +26,7 @@ int main(int arc, char *argv){
         printf("Welcome to my shell!\n");
         while(interactive){
             printf("mysh> ");
-            char command[40];
+            char command[200];
             fgets(command, sizeof(command), stdin);
             if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd fix, I dunno how
                 char path[PATH_MAX];
