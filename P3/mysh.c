@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <linux/limits.h>
 #include <string.h>
+#include <stdlib.h>
 
 int main(int arc, char *argv){
     int interactive;
@@ -38,13 +39,29 @@ int main(int arc, char *argv){
                     }
                 }
                 printf("%s\n", path);
-
-                if(chdir(path) == -1){
-                    printf("cd: No such file or directory\n");
+                if (path[0] == '/') {
+                    if(chdir(path) == -1){
+                        printf("cd: No such file or directory\n");
+                    }else{
+                        char cwd[PATH_MAX];
+                        getcwd(cwd, sizeof(cwd));
+                        printf("%s\n", cwd);
+                    }
                 }else{
                     char cwd[PATH_MAX];
                     getcwd(cwd, sizeof(cwd));
-                    printf("%s\n", cwd);
+                    char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
+                    strcpy(filename, cwd);
+                    strcat(filename, "/");
+                    strcat(filename, path);
+
+                    if(chdir(filename) == -1){
+                        printf("cd: No such file or directory\n");
+                    }else{
+                        char cwds[PATH_MAX];
+                        getcwd(cwds, sizeof(cwds));
+                        printf("%s\n", cwds);
+                    }
                 }
                 memset(path, 0, sizeof(path));
             }else if(command[0] == 'p' && command[1] == 'w' && command[2] == 'd'){ //pwd
