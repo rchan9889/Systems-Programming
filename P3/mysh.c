@@ -80,7 +80,7 @@ int main(int arc, char *argv){
                 while(command[i]){
 		    //printf("Testing: %d\n", i);	
                     if (command[i] != 10) {
-                        path[i - 3] = command[i];
+                        path[i - 6] = command[i];
 		    }
 		    i++;
                 }
@@ -100,13 +100,13 @@ int main(int arc, char *argv){
 		printf("dirOne = _%s_\n", dirOne);
 		printf("dirTwo = _%s_\n", dirTwo);
 		printf("dirThree = _%s_\n", dirThree);
-		if (access(dirOne, F_OK != -1)) {
+		if (access(dirOne, F_OK) != -1) {
 		    printf("%s\n", dirOne);
 		} 
-		else if (access(dirTwo, F_OK != -1)) {
+		else if (access(dirTwo, F_OK) != -1) {
                     printf("%s\n", dirTwo);
                 }
-		else if (access(dirThree, F_OK != -1)) {
+		else if (access(dirThree, F_OK) != -1) {
                     printf("%s\n", dirThree);
                 } 
 		
