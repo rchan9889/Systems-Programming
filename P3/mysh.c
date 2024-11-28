@@ -81,7 +81,18 @@ int main(int arc, char *argv){
 		            }
 		            i++;
                 }
-		    
+
+                char cwd[PATH_MAX];
+                getcwd(cwd, sizeof(cwd));
+                char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
+                    
+		        strcat(filename, cwd);
+                strcat(filename, "/");
+                strcat(filename, path);
+                if (access(filename, F_OK) != -1) {
+                    printf("%s\n", filename);
+                }
+                /*
                 char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
                 strcat(dirOne, "/usr/local/bin/");
                 strcat(dirOne, path);
@@ -91,7 +102,7 @@ int main(int arc, char *argv){
                 strcat(dirTwo, path);
                     
                 char* dirThree = malloc(sizeof(char) * (5 + sizeof(path) + 1));
-                        strcat(dirThree, "/bin/");
+                strcat(dirThree, "/bin/");
                 strcat(dirThree, path);
                     
                 printf("dirOne = _%s_\n", dirOne);
@@ -103,7 +114,8 @@ int main(int arc, char *argv){
                     printf("%s\n", dirTwo);
                 } else if (access(dirThree, F_OK) != -1) {
                     printf("%s\n", dirThree);
-                }       
+                }
+                */       
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
                 printf("exiting\n");
                 int i = 4;
