@@ -85,6 +85,7 @@ int main(int arc, char *argv){
 		            i++;
                 }
 
+                /*
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
@@ -103,7 +104,9 @@ int main(int arc, char *argv){
                 free(filename);
                 memset(cwd, 0, sizeof(cwd));
                 memset(path, 0, sizeof(path));
-                /*
+                */
+
+                
                 char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
                 strcat(dirOne, "/usr/local/bin/");
                 strcat(dirOne, path);
@@ -126,7 +129,22 @@ int main(int arc, char *argv){
                 } else if (access(dirThree, F_OK) != -1) {
                     printf("%s\n", dirThree);
                 }
-                */       
+                free(dirOne);
+                free(dirTwo);
+                free(dirThree);
+                memset(path, 0, sizeof(path));
+            }else if(command[0] == 'e' && command[1] == 'c' && command[2] == 'h' && command[3] == 'o') {
+                char text[PATH_MAX];
+                int i = 5;
+                while(command[i]){
+		            //printf("Testing: %d\n", i);	
+                    if (command[i] != 10) {
+                        text[i - 5] = command[i];
+		            }
+		            i++;
+                }
+                printf("%s\n", text);
+                memset(text, 0, sizeof(text));  
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
                 printf("exiting\n");
                 int i = 4;
@@ -244,6 +262,19 @@ int main(int arc, char *argv){
                 free(dirTwo);
                 free(dirThree);   
                 memset(path, 0, sizeof(path));    
+            }else if(command[0] == 'e' && command[1] == 'c' && command[2] == 'h' && command[3] == 'o') {
+                char text[PATH_MAX];
+                int i = 5;
+                while(command[i]){
+		            //printf("Testing: %d\n", i);	
+                    if (command[i] != 10) {
+                        text[i - 5] = command[i];
+		            }
+		            i++;
+                }
+                printf("%s\n", text);
+                memset(text, 0, sizeof(text));  
+            }
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
                 printf("exiting\n");
                 int i = 4;
