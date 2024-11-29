@@ -61,16 +61,17 @@ int main(int arc, char *argv){
                     if(chdir(filename) == -1){
                         printf("cd: No such file or directory\n");
                     }else{
-                        char cwds[PATH_MAX];
-                        getcwd(cwds, sizeof(cwds));
-                        printf("%s\n", cwds);
+                        printf("%s\n", filename);
                     }
+                    free(filename);
+                    memset(cwd, 0, sizeof(cwd));
                 }
                 memset(path, 0, sizeof(path));
             }else if(command[0] == 'p' && command[1] == 'w' && command[2] == 'd'){ //pwd
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 printf("%s\n", cwd);
+                memset(cwd, 0, sizeof(cwd));
             }else if(command[0] == 'w' && command[1] == 'h' && command[2] == 'i' && command[3] == 'c' && command[4] == 'h' && command[5] == ' '){ //which
         	    char path[PATH_MAX];
                 int i = 6;
@@ -89,9 +90,17 @@ int main(int arc, char *argv){
 		        strcat(filename, cwd);
                 strcat(filename, "/");
                 strcat(filename, path);
+                printf("This is a test print statement. Current filename = |%s|\n", filename);
                 if (access(filename, F_OK) != -1) {
+                    printf("%s exists within the current directory.\n", path);
                     printf("%s\n", filename);
                 }
+                else {
+                    printf("Something went wrong. Filename: |%s|\n", filename)
+                }
+                free(filename);
+                memset(cwd, 0, sizeof(cwd));
+                memset(path, 0, sizeof(path));
                 /*
                 char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
                 strcat(dirOne, "/usr/local/bin/");
