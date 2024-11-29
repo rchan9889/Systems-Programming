@@ -3,6 +3,7 @@
 #include <linux/limits.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 int main(int arc, char *argv){
     int interactive;
@@ -28,8 +29,9 @@ int main(int arc, char *argv){
         while(interactive){
             printf("mysh> ");
             char command[200];
+            memset(command, 0, sizeof(command));
             fgets(command, sizeof(command), stdin);
-            if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd fix, I dunno how
+            if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd
                 char path[PATH_MAX];
                 int i = 3;
                 while(command[i]){
@@ -65,6 +67,7 @@ int main(int arc, char *argv){
                         getcwd(cwds, sizeof(cwds));
                         printf("%s\n", cwds);
                     }
+                    free(filename);
                 }
                 memset(path, 0, sizeof(path));
             }else if(command[0] == 'p' && command[1] == 'w' && command[2] == 'd'){ //pwd
@@ -103,17 +106,60 @@ int main(int arc, char *argv){
                     printf("%s\n", dirTwo);
                 } else if (access(dirThree, F_OK) != -1) {
                     printf("%s\n", dirThree);
-                }       
-            }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
-                printf("exiting\n");
+                }
+                memset(path, 0, sizeof(path));
+                free(dirOne);
+                free(dirTwo);
+                free(dirThree);
+            }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't' && command[4] <= 32){ //exit
+                printf("exiting");
                 int i = 4;
-                while(command[i]){
+                while(command[i] != '\0'){
                     printf("%c", command[i]);
+                    i++;
                 }
                 return 0;
-            }else if(command[0] == '.' && command[1] == '/' && command[2] == ' '){ //./
+            }else if((command[0] == '.' && command[1] == '/') || (command[0] == '/')){ //./ or /
+                if(command[0] == '/'){
+                    char path[PATH_MAX];
+                    int i = 0;
+                    while(command[i] != 10){
+                        path[i] = command[i];
+                        i++;
+                    }
 
-            }else{
+                    printf("%s\n", path);
+
+                    int result = system(path);
+
+                    if(result){
+                        printf("Failed to execute: %s", path);
+                    }
+                    memset(path, 0, sizeof(path));
+                }else{
+                    char file[PATH_MAX];
+                    int i = 2;
+                    while(command[i] != 10){
+                        file[i - 2] = command[i];
+                        i++;
+                    }
+                    char path[PATH_MAX];
+                    getcwd(path, sizeof(path));
+                    strcat(path, "/");
+                    strcat(path, file);
+
+                    printf("%s\n", path);
+
+                    int result = system(path);
+
+                    if(result){
+                        printf("Failed to execute.");
+                    }
+                    memset(file, 0, sizeof(file));
+                    memset(path, 0, sizeof(path));
+                }
+                printf("\n");
+            }else{ //bare names
             
             }        
         }
