@@ -114,15 +114,15 @@ int main(int arc, char *argv){
                 */
 
                 
-                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
+                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path)));
                 strcat(dirOne, "/usr/local/bin/");
                 strcat(dirOne, path);
                     
-                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path) + 1));
+                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path)));
                 strcat(dirTwo, "/usr/bin/");
                 strcat(dirTwo, path);
                     
-                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path) + 1));
+                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path)));
                 strcat(dirThree, "/bin/");
                 strcat(dirThree, path);
                     
@@ -349,15 +349,15 @@ int main(int arc, char *argv){
                 
 
                 /*
-                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
+                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path)));
                 strcat(dirOne, "/usr/local/bin/");
                 strcat(dirOne, path);
                     
-                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path) + 1));
+                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path)));
                 strcat(dirTwo, "/usr/bin/");
                 strcat(dirTwo, path);
                     
-                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path) + 1));
+                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path)));
                 strcat(dirThree, "/bin/");
                 strcat(dirThree, path);
                     
