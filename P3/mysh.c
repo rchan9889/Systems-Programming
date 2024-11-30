@@ -153,10 +153,115 @@ int main(int arc, char *argv){
                 }
                 return 0;
             }else if(command[0] == '.' && command[1] == '/' && command[2] == ' '){ //./
+                if(command[0] == '/'){
+                    char path[PATH_MAX];
+                    int i = 0;
+                    while(command[i] != 10){
+                        path[i] = command[i];
+                        i++;
+                    }
 
-            }else{
-            
-            }        
+                    printf("%s\n", path);
+
+                    int result = system(path);
+
+                    if(result){
+                        printf("Failed to execute: %s", path);
+                    }
+                    memset(path, 0, sizeof(path));
+                }else{
+                    char file[PATH_MAX];
+                    int i = 2;
+                    while(command[i] != 10){
+                        file[i - 2] = command[i];
+                        i++;
+                    }
+                    char path[PATH_MAX];
+                    getcwd(path, sizeof(path));
+                    strcat(path, "/");
+                    strcat(path, file);
+
+                    printf("%s\n", path);
+
+                    int result = system(path);
+
+                    if(result){
+                        printf("Failed to execute.");
+                    }
+                    memset(file, 0, sizeof(file));
+                    memset(path, 0, sizeof(path));
+                }
+                printf("\n");
+            }else{ //bare names
+                int i = 0;
+                int j = 0;
+                int k = 0;
+                char arguments[10][20];
+                memset(arguments, 0, sizeof(arguments));
+                while(command[i] != '\0'){
+                    if(command[i] == ' '){
+                        k = 0;
+                        j++;
+                    }else{
+                        arguments[j][k] = command[i];
+                        k++;
+                    }
+                    i++;
+                }
+                
+                char *exec;
+                char args[9][20];
+                int x = 0;
+
+                for(int l = 0; l < 9; l++){
+                    if(l == 0){
+                        exec = malloc(strlen(arguments[l]) + 1);
+                        sprintf(exec, "%s", arguments[l]);
+                        exec[strlen(exec) - 1] = '\0';
+                    }else{
+                        for(int m = 0; m < strlen(arguments[l]); m++){
+                            if(arguments[l][m] == '*'){
+                                glob_t globbuf;
+
+                                char *wildcard = malloc(strlen(arguments[l]) + 1);
+                                sprintf(wildcard, "%s", arguments[l]);
+                                
+                                if(wildcard[strlen(wildcard) - 1] != 10){
+                                    wildcard[strlen(wildcard)] = '\0';
+                                }else{
+                                    wildcard[strlen(wildcard) - 1] = '\0';
+                                }
+
+                                int result = glob(wildcard, 0, NULL, &globbuf);
+                                if(result == 0){
+                                    for(int i = 0; i < globbuf.gl_pathc; i++){
+                                        //printf("%s\n", globbuf.gl_pathv[i]);
+                                        sprintf(args[x], "%s", globbuf.gl_pathv[i]);
+                                        x++;
+                                    }
+                                    globfree(&globbuf);
+                                    break;
+                                }else{
+                                    printf("Fail.");
+                                }
+                            }else if(m = strlen(arguments[l])){
+                                sprintf(args[x], "%s", arguments[l]);
+                                //printf("%s ", arguments[l]);
+                                x++;
+                            }
+                        }
+                    }
+                }
+                i = 0;
+                while(args[i][0] != 0){
+                    printf("%s ", args[i]);
+                    i++;
+                }
+                
+                memset(arguments, '\0', sizeof(arguments));
+                memset(args, '\0', sizeof(args));
+                free(exec);
+            }      
         }
     }else{ //batch mode
         //search for script file
