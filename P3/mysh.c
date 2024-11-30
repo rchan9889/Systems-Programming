@@ -134,18 +134,6 @@ int main(int arc, char *argv){
                 free(dirThree);
                 memset(path, 0, sizeof(path));
 		*/
-            }else if(command[0] == 'e' && command[1] == 'c' && command[2] == 'h' && command[3] == 'o') {
-                char text[PATH_MAX];
-                int i = 5;
-                while(command[i]){
-		            //printf("Testing: %d\n", i);	
-                    if (command[i] != 10) {
-                        text[i - 5] = command[i];
-		            }
-		            i++;
-                }
-                printf("%s\n", text);
-                memset(text, 0, sizeof(text));  
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
                 printf("exiting\n");
                 int i = 4;
@@ -153,46 +141,6 @@ int main(int arc, char *argv){
                     printf("%c", command[i]);
                 }
                 return 0;
-            }else if(command[0] == '.' && command[1] == '/' && command[2] == ' '){ //./
-                if(command[0] == '/'){
-                    char path[PATH_MAX];
-                    int i = 0;
-                    while(command[i] != 10){
-                        path[i] = command[i];
-                        i++;
-                    }
-
-                    printf("%s\n", path);
-
-                    int result = system(path);
-
-                    if(result){
-                        printf("Failed to execute: %s", path);
-                    }
-                    memset(path, 0, sizeof(path));
-                }else{
-                    char file[PATH_MAX];
-                    int i = 2;
-                    while(command[i] != 10){
-                        file[i - 2] = command[i];
-                        i++;
-                    }
-                    char path[PATH_MAX];
-                    getcwd(path, sizeof(path));
-                    strcat(path, "/");
-                    strcat(path, file);
-
-                    printf("%s\n", path);
-
-                    int result = system(path);
-
-                    if(result){
-                        printf("Failed to execute.");
-                    }
-                    memset(file, 0, sizeof(file));
-                    memset(path, 0, sizeof(path));
-                }
-                printf("\n");
             }else{ //bare names
                 int i = 0;
                 int j = 0;
@@ -210,15 +158,34 @@ int main(int arc, char *argv){
                     i++;
                 }
                 
-                char *exec;
-                char args[9][20];
+                char exec[PATH_MAX];
+                char **args = malloc(9 * sizeof(char *));
+                args[0] = malloc(9 * 20 * sizeof(char));
+                for(int i = 1; i < 9; i++){
+                    args[i] = args[0] + i * 20;
+                }
                 int x = 0;
 
                 for(int l = 0; l < 9; l++){
                     if(l == 0){
-                        exec = malloc(strlen(arguments[l]) + 1);
-                        sprintf(exec, "%s", arguments[l]);
-                        exec[strlen(exec) - 1] = '\0';
+                        if(arguments[l][0] == '.' && arguments[l][1] == '/'){
+                            char file[PATH_MAX];
+                            int i = 1;
+                            while(arguments[l][i] != 10){
+                                file[i - 1] = arguments[l][i];
+                                i++;
+                            }
+                            //printf("%s", file);
+                            getcwd(exec, (sizeof(exec)));
+                            //printf("%s", exec);
+                            strcat(exec, file);
+                            //exec[strlen(exec)] = '\0';
+                            printf("%s", exec);
+                        }else{
+                            sprintf(exec, "%s", arguments[l]);
+                            //printf("%s", exec);
+                            exec[strlen(exec) - 1] = '\0';
+                        }
                     }else{
                         for(int m = 0; m < strlen(arguments[l]); m++){
                             if(arguments[l][m] == '*'){
@@ -255,13 +222,20 @@ int main(int arc, char *argv){
                 }
                 i = 0;
                 while(args[i][0] != 0){
-                    printf("%s ", args[i]);
+                    //printf("%s ", args[i]);
                     i++;
+                }
+
+                args[i] = '\0';
+
+                if(execv(exec, args) == -1){
+                    perror("execv failed");
                 }
                 
                 memset(arguments, '\0', sizeof(arguments));
-                memset(args, '\0', sizeof(args));
-                free(exec);
+                memset(exec, '\0', sizeof(exec));
+                free(args);
+                //free(exec);
             }      
         }
     }else{ //batch mode
