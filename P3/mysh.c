@@ -9,6 +9,38 @@
 #include <dirent.h>
 #include <fcntl.h>
 
+char* where(char path[]) {
+
+    static char dirOne[15 + sizeof(path)];
+    memset(dirOne, 0, sizeof(dirOne));
+    strcat(dirOne, "/usr/local/bin/");
+    strcat(dirOne, path);
+                    
+    static char dirTwo[9 + sizeof(path)];
+    memset(dirTwo, 0, sizeof(dirTwo));
+    strcat(dirTwo, "/usr/bin/");
+    strcat(dirTwo, path);
+                    
+    static char dirThree[5 + sizeof(path)];
+    memset(dirThree, 0, sizeof(dirThree));
+    strcat(dirThree, "/bin/");
+    strcat(dirThree, path);
+                    
+    printf("dirOne = _%s_\n", dirOne);
+    printf("dirTwo = _%s_\n", dirTwo);
+    printf("dirThree = _%s_\n", dirThree);
+    if (access(dirOne, F_OK) != -1) {
+        return dirOne;
+    } else if (access(dirTwo, F_OK) != -1) {
+        return dirTwo;
+    } else if (access(dirThree, F_OK) != -1) {
+        return dirThree;
+    } else {
+		return NULL;
+	}
+                
+}
+
 int main(int arc, char *argv){
     int interactive;
     // FILE *fp;
@@ -113,34 +145,14 @@ int main(int arc, char *argv){
                 memset(path, 0, sizeof(path));
                 */
 
-                
-                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path)));
-                strcat(dirOne, "/usr/local/bin/");
-                strcat(dirOne, path);
-                    
-                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path)));
-                strcat(dirTwo, "/usr/bin/");
-                strcat(dirTwo, path);
-                    
-                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path)));
-                strcat(dirThree, "/bin/");
-                strcat(dirThree, path);
-                    
-                printf("dirOne = _%s_\n", dirOne);
-                printf("dirTwo = _%s_\n", dirTwo);
-                printf("dirThree = _%s_\n", dirThree);
-                if (access(dirOne, F_OK) != -1) {
-                    printf("%s\n", dirOne);
-                } else if (access(dirTwo, F_OK) != -1) {
-                    printf("%s\n", dirTwo);
-                } else if (access(dirThree, F_OK) != -1) {
-                    printf("%s\n", dirThree);
-                } else {
-			printf("%s wasn't found in any of the three directories.\n", path);
-		}
-                free(dirOne);
-                free(dirTwo);
-                free(dirThree);
+                char* result = where(path);
+                if (result == NULL) {
+                    printf("%s wasn't found in any of the three directories.\n", path);
+                }
+                else {
+                    printf("%s\n", result);
+                }
+                // free(result);
                 memset(path, 0, sizeof(path));
 		
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
@@ -344,18 +356,15 @@ int main(int arc, char *argv){
                 }
 
                 
-                char cwd[PATH_MAX];
-                getcwd(cwd, sizeof(cwd));
-                char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
-                    
-		strcat(filename, cwd);
-                strcat(filename, "/");
-                strcat(filename, path);
-                if (access(filename, F_OK) != -1) {
-                    printf("%s\n", filename);
+                char* result = where(path);
+                if (result == NULL) {
+                    printf("%s wasn't found in any of the three directories.\n", path);
                 }
-		free(filename);
-		memset(path, 0, sizeof(path)); 
+                else {
+                    printf("%s\n", result);
+                }
+                
+                memset(path, 0, sizeof(path));
                 
 
                 /*
