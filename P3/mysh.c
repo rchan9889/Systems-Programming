@@ -219,18 +219,21 @@ int main(int arc, char *argv){
                             printf("%s", exec);
                         }else{
                             if(arguments[l][0] != '/'){
+                                if(arguments[l][strlen(arguments[l]) - 1] != 10){
+                                    arguments[l][strlen(arguments[l])] = 0;
+                                }else{
+                                    arguments[l][strlen(arguments[l]) - 1] = 0;
+                                }
+                                //arguments[l][strlen(arguments[l]) - 1] = 'b';
+                                //printf("%s", arguments[l]);
                                 sprintf(exec, "%s", where(arguments[l]));
                                 //printf("%s\n", exec);
                             }else{
                                 sprintf(exec, "%s", arguments[l]);
                             }
                             //printf("%s\n", exec);
-                            if(exec[strlen(exec) - 1] != 10){
-                                exec[strlen(exec)] = '\0';
-                            }else{
-                                exec[strlen(exec) - 1] = '\0';
-                            }
-                            //printf("%s\n", exec);
+                            
+                            //printf("%c\n", exec[strlen(exec) - 1]);
                             if(strstr(exec, "bin") != NULL){
                                 sprintf(args[0], "%s", exec);
                                 x++;
@@ -261,25 +264,50 @@ int main(int arc, char *argv){
                                     globfree(&globbuf);
                                     break;
                                 }else{
-                                    printf("Fail.");
+                                    args[x] = arguments[l];
+                                    if(args[x][strlen(args[x]) - 1] != 10){
+                                        args[x][strlen(args[x])] = '\0';
+                                    }else{
+                                        args[x][strlen(args[x]) - 1] = '\0';
+                                    }
+                                    x++;
                                 }
-                            }else if(m = strlen(arguments[l])){
+                            }else if(m == strlen(arguments[l] - 1)){
                                 sprintf(args[x], "%s", arguments[l]);
                                 //printf("%s ", arguments[l]);
+                                if(args[x][strlen(args[x]) - 1] != 10){
+                                    args[x][strlen(args[x])] = '\0';
+                                }else{
+                                    args[x][strlen(args[x]) - 1] = '\0';
+                                }
                                 x++;
                             }
                         }
                     }
                 }
                 i = 0;
-                while(args[i][0] != 0){
-                    //printf("%c ", args[i][0]);
+                int in = 0;
+                int out = 0;
+                char input[64];
+                char output[64];
+                while(args[i][0] != '\0'){
+                    if(strcmp(args[i], "<") == 0){
+                        args[i] = NULL;
+                        strcpy(input, args[i + 1]);
+                        in = 2;
+                    }
+
+                    if(strcmp(args[i], ">") == 0){
+                        args[i] = NULL;
+                        strcpy(output, args[i + 1]);
+                        out = 2;
+                    }
                     i++;
                 }
 
                 args[i] = NULL;
                 
-                pid_t pid = fork();
+                int pid = fork();
                 if(pid == 0){    
                     if(execv(exec, args) == -1){
                         perror("execv failed");
