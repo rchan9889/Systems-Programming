@@ -4,20 +4,21 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <fcntl.h>
 
 int main(int arc, char *argv){
     int interactive;
-    FILE *fp;
+    // FILE *fp;
     int fd;
 
-    fp = fopen(argv, "r");
+    fd = open(argv, O_RDWR);
 
-    if(fp == NULL){ //no argument
+    if(fd == -1){ //no argument
         interactive = 1;
-    }else{
-        fd = fileno(fp);
-    }
-    if(!interactive && !isatty(fd)){
+    }else if(!interactive && !isatty(fd)){
         interactive = 0;
     }else{
         interactive = 1;
@@ -28,9 +29,15 @@ int main(int arc, char *argv){
         printf("Welcome to my shell!\n");
         while(interactive){
             printf("mysh> ");
-            char command[200];
-            memset(command, 0, sizeof(command));
-            fgets(command, sizeof(command), stdin);
+            char* command = malloc(200 * sizeof(char));
+            // memset(command, 0, sizeof(command));
+            // fgets(command, sizeof(command), stdin);
+            if (read(0, command, sizeof(command)) == 0) {
+                printf("Something wrong has occured. Exiting program now.\n");
+                return 1;
+            }
+		
+            printf("Command string is %s", command);
             if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd
                 char path[PATH_MAX];
                 int i = 3;
@@ -85,7 +92,7 @@ int main(int arc, char *argv){
 		            i++;
                 }
 
-                
+                /*
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
@@ -104,18 +111,18 @@ int main(int arc, char *argv){
                 free(filename);
                 memset(cwd, 0, sizeof(cwd));
                 memset(path, 0, sizeof(path));
-                
+                */
 
-                /*
-                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
+                
+                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path)));
                 strcat(dirOne, "/usr/local/bin/");
                 strcat(dirOne, path);
                     
-                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path) + 1));
+                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path)));
                 strcat(dirTwo, "/usr/bin/");
                 strcat(dirTwo, path);
                     
-                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path) + 1));
+                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path)));
                 strcat(dirThree, "/bin/");
                 strcat(dirThree, path);
                     
@@ -128,12 +135,14 @@ int main(int arc, char *argv){
                     printf("%s\n", dirTwo);
                 } else if (access(dirThree, F_OK) != -1) {
                     printf("%s\n", dirThree);
-                }
+                } else {
+			printf("%s wasn't found in any of the three directories.\n", path);
+		}
                 free(dirOne);
                 free(dirTwo);
                 free(dirThree);
                 memset(path, 0, sizeof(path));
-		*/
+		
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
                 printf("exiting\n");
                 int i = 4;
@@ -252,12 +261,34 @@ int main(int arc, char *argv){
         //search for script file
         char command[200];
 
-        if (fp == NULL) {
+        if (fd == -1) {
             printf("Failed to open file.\n");
             return 1;
         }
         //if found open file and run commands
-        while (fgets(command, sizeof(command), fp) != NULL) {
+        int moreToRead = 1;
+            
+        while (moreToRead) {
+            char* command = malloc(200 * sizeof(char));
+            char ch = 0;
+            while (true) {
+                if (read(fd, &ch, 1) == 0) {
+                    moreToRead = 0;
+                    printf("We have reached the end of the file.\n");
+                    break;
+                }
+                else if (ch == 10){
+                    printf("We have reached a newline.\n");
+                    break;
+                }
+                else {
+                    strncat(command, ch, 1);
+                    printf("Current value of variable command: %s\n", command);
+                }
+            }
+            printf("Command string is %s", command);
+            //printf("Something wrong has occured. Exiting program now.\n");
+        
             if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd fix, I dunno how
                 char path[PATH_MAX];
                 int i = 3;
@@ -302,7 +333,7 @@ int main(int arc, char *argv){
                 getcwd(cwd, sizeof(cwd));
                 printf("%s\n", cwd);
             }else if(command[0] == 'w' && command[1] == 'h' && command[2] == 'i' && command[3] == 'c' && command[4] == 'h' && command[5] == ' '){ //which
-        	    char path[PATH_MAX];
+        	char path[PATH_MAX];
                 int i = 6;
                 while(command[i]){
 		            //printf("Testing: %d\n", i);	
@@ -312,29 +343,31 @@ int main(int arc, char *argv){
 		            i++;
                 }
 
-                /*
+                
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
                     
-		        strcat(filename, cwd);
+		strcat(filename, cwd);
                 strcat(filename, "/");
                 strcat(filename, path);
                 if (access(filename, F_OK) != -1) {
                     printf("%s\n", filename);
                 }
-                */
-
+		free(filename);
+		memset(path, 0, sizeof(path)); 
                 
-                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path) + 1));
+
+                /*
+                char* dirOne = malloc(sizeof(char) * (15 + sizeof(path)));
                 strcat(dirOne, "/usr/local/bin/");
                 strcat(dirOne, path);
                     
-                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path) + 1));
+                char* dirTwo = malloc(sizeof(char) * (9 + sizeof(path)));
                 strcat(dirTwo, "/usr/bin/");
                 strcat(dirTwo, path);
                     
-                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path) + 1));
+                char* dirThree = malloc(sizeof(char) * (5 + sizeof(path)));
                 strcat(dirThree, "/bin/");
                 strcat(dirThree, path);
                     
@@ -351,7 +384,8 @@ int main(int arc, char *argv){
                 free(dirOne);
                 free(dirTwo);
                 free(dirThree);   
-                memset(path, 0, sizeof(path));    
+                memset(path, 0, sizeof(path)); 
+		*/
             }else if(command[0] == 'e' && command[1] == 'c' && command[2] == 'h' && command[3] == 'o') {
                 char text[PATH_MAX];
                 int i = 5;
@@ -364,7 +398,7 @@ int main(int arc, char *argv){
                 }
                 printf("%s\n", text);
                 memset(text, 0, sizeof(text));  
-            }
+            
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't'){ //exit
                 printf("exiting\n");
                 int i = 4;
