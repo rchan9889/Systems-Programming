@@ -145,7 +145,7 @@ int main(int arc, char *argv){
                 int i = 0;
                 int j = 0;
                 int k = 0;
-                char arguments[10][20];
+                char arguments[10][40];
                 memset(arguments, 0, sizeof(arguments));
                 while(command[i] != '\0'){
                     if(command[i] == ' '){
@@ -159,10 +159,11 @@ int main(int arc, char *argv){
                 }
                 
                 char exec[PATH_MAX];
+                memset(exec, '\0', sizeof(exec));
                 char **args = malloc(9 * sizeof(char *));
-                args[0] = malloc(9 * 20 * sizeof(char));
+                args[0] = malloc(9 * 40 * sizeof(char));
                 for(int i = 1; i < 9; i++){
-                    args[i] = args[0] + i * 20;
+                    args[i] = args[0] + i * 40;
                 }
                 int x = 0;
 
@@ -184,7 +185,16 @@ int main(int arc, char *argv){
                         }else{
                             sprintf(exec, "%s", arguments[l]);
                             //printf("%s", exec);
-                            exec[strlen(exec) - 1] = '\0';
+                            if(exec[strlen(exec) - 1] != 10){
+                                exec[strlen(exec)] = '\0';
+                            }else{
+                                exec[strlen(exec) - 1] = '\0';
+                            }
+                            //printf("%s", exec);
+                            if(strstr(exec, "bin") != NULL){
+                                sprintf(args[0], "%s", exec);
+                                x++;
+                            }
                         }
                     }else{
                         for(int m = 0; m < strlen(arguments[l]); m++){
@@ -222,7 +232,7 @@ int main(int arc, char *argv){
                 }
                 i = 0;
                 while(args[i][0] != 0){
-                    //printf("%s ", args[i]);
+                    //printf("%c ", args[i][0]);
                     i++;
                 }
 
