@@ -11,17 +11,17 @@
 
 char* where(char path[]) {
 
-    static char dirOne[15 + sizeof(path)];
-    memset(dirOne, 0, sizeof(dirOne));
+    static char dirOne[15 + strlen(path) + 1];
+    memset(dirOne, 0, strlen(path) + 1);
     strcat(dirOne, "/usr/local/bin/");
     strcat(dirOne, path);
                     
-    static char dirTwo[9 + sizeof(path)];
+    static char dirTwo[9 + strlen(path) + 1];
     memset(dirTwo, 0, sizeof(dirTwo));
     strcat(dirTwo, "/usr/bin/");
     strcat(dirTwo, path);
                     
-    static char dirThree[5 + sizeof(path)];
+    static char dirThree[5 + strlen(path) + 1];
     memset(dirThree, 0, sizeof(dirThree));
     strcat(dirThree, "/bin/");
     strcat(dirThree, path);
@@ -283,7 +283,7 @@ int main(int arc, char *argv){
         while (moreToRead) {
             char* command = malloc(200 * sizeof(char));
             char ch = 0;
-            while (true) {
+            while (1) {
                 if (read(fd, &ch, 1) == 0) {
                     moreToRead = 0;
                     printf("We have reached the end of the file.\n");
@@ -294,7 +294,7 @@ int main(int arc, char *argv){
                     break;
                 }
                 else {
-                    strncat(command, ch, 1);
+                    strncat(command, &ch, 1);
                     printf("Current value of variable command: %s\n", command);
                 }
             }
