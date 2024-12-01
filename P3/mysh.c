@@ -177,8 +177,7 @@ int main(int arc, char *argv){
 		*/
                 return 0;
             }else{ //bare names
-                
-		int i = 0;
+                int i = 0;
                 int j = 0;
                 int k = 0;
                 char arguments[10][40];
@@ -219,19 +218,25 @@ int main(int arc, char *argv){
                             //exec[strlen(exec)] = '\0';
                             printf("%s", exec);
                         }else{
-                            sprintf(exec, "%s", arguments[l]);
-                            //printf("%s", exec);
+                            if(arguments[l][0] != '/'){
+                                sprintf(exec, "%s", where(arguments[l]));
+                                //printf("%s\n", exec);
+                            }else{
+                                sprintf(exec, "%s", arguments[l]);
+                            }
+                            //printf("%s\n", exec);
                             if(exec[strlen(exec) - 1] != 10){
                                 exec[strlen(exec)] = '\0';
                             }else{
                                 exec[strlen(exec) - 1] = '\0';
                             }
-                            //printf("%s", exec);
+                            //printf("%s\n", exec);
                             if(strstr(exec, "bin") != NULL){
                                 sprintf(args[0], "%s", exec);
                                 x++;
                             }
                         }
+                        //printf("%s", exec);
                     }else{
                         for(int m = 0; m < strlen(arguments[l]); m++){
                             if(arguments[l][m] == '*'){
@@ -272,21 +277,24 @@ int main(int arc, char *argv){
                     i++;
                 }
 
-                args[i] = '\0';
-
-                if(execv(exec, args) == -1){
-                    perror("execv failed");
+                args[i] = NULL;
+                
+                pid_t pid = fork();
+                if(pid == 0){    
+                    if(execv(exec, args) == -1){
+                        perror("execv failed");
+                    }
+                    exit(0);
+                }else{
+                    wait(NULL);
                 }
                 
                 memset(arguments, '\0', sizeof(arguments));
                 memset(exec, '\0', sizeof(exec));
                 free(args);
                 //free(exec);
-            
-	    }     
-	    
+            }
         }
-	
     }else{ //batch mode
         //search for script file
         char command[200];
