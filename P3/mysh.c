@@ -135,7 +135,7 @@ int main(int arc, char *argv){
                 while(command[i]){
 		    //printf("Testing: %d\n", i);	
                     if (command[i] != 10) {
-                        path[i - 6] = command[I];
+                        path[i - 6] = command[i];
 		    }
 		    i++;
                 }
