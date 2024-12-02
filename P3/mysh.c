@@ -9,7 +9,6 @@
 #include <fcntl.h>
 
 char* where(char path[]) {
-    //printf("path is |%s|\n", path);
     char dirOne[15 + strlen(path) + 1];
     memset(dirOne, 0, strlen(path) + 1);
     strcat(dirOne, "/usr/local/bin/");
@@ -24,11 +23,6 @@ char* where(char path[]) {
     memset(dirThree, 0, sizeof(dirThree));
     strcat(dirThree, "/bin/");
     strcat(dirThree, path);
-                    
-    /* printf("dirOne = %s\n", dirOne);
-    printf("dirTwo = _%s_\n", dirTwo);
-    printf("dirThree = _%s_\n", dirThree); */
-    
     
     if (access(dirOne, F_OK) != -1) {
    	    char* answerOne = malloc((15 + strlen(path) + 1) * sizeof(char));
@@ -37,12 +31,10 @@ char* where(char path[]) {
     } else if (access(dirTwo, F_OK) != -1) {
         char* answerTwo = malloc((9 + strlen(path) + 1) * sizeof(char));
         strcpy(answerTwo, dirTwo);
-	//printf("DrTwo\n");
 	    return answerTwo;
     } else if (access(dirThree, F_OK) != -1) {
         char* answerThree = malloc((5 + strlen(path) + 1) * sizeof(char));
         strcpy(answerThree, dirThree);
-	//printf("DrThee\n");
 	    return answerThree;
     } else {
 	    return NULL;
@@ -52,7 +44,6 @@ char* where(char path[]) {
 
 int main(int arc, char *argv){
     int interactive;
-    // FILE *fp;
     int fd;
 
     fd = open(argv, O_RDWR);
@@ -72,44 +63,44 @@ int main(int arc, char *argv){
             printf("mysh> ");
             fflush(stdout);
             char *command = malloc(200 * sizeof(char));
-            // command[200];
-            //memset(command, '\0', sizeof(command));
+
             if (read(0, command, 200) == 0) {
                 printf("Something wrong has occured. Exiting program now.\n");
                 return 1;
             } 
-            /* int i = 0;
-            while(command[i] != 10){
-                printf("%c", command[i]);
-                i++;
-            } */
-            //fgets(command, sizeof(command), stdin);
+
             if(command[0] == 'c' && command[1] == 'd' && command[2] == ' '){ //cd
                 char path[PATH_MAX];
                 int i = 3;
                 while(command[i]){
-		            //printf("Testing: %d\n", i);	
+<<<<<<< HEAD
+=======
+		    //printf("Testing: %d\n", i);	
+>>>>>>> 8989acd736ea6622db8b025a23f7170c20155d28
                     if (command[i] != 10) {
                         path[i - 3] = command[i];
                     }
-		            i++;
+		    i++;
                 }
                 printf("%s\n", path);
-		        if(path[0] == 47) { // The ascii value for backslash
+		if(path[0] == 47) { // The ascii value for backslash
                     if(chdir(path) == -1){
                         printf("cd: No such file or directory\n");
                     }else{
-		                //printf("Testing");
+<<<<<<< HEAD
+=======
+		        //printf("Testing");
+>>>>>>> 8989acd736ea6622db8b025a23f7170c20155d28
                         char cwd[PATH_MAX];
                         getcwd(cwd, sizeof(cwd));
                         printf("%s\n", cwd);
                     }
-		        }else{
-		            char cwd[PATH_MAX];
+	        }else{
+		    char cwd[PATH_MAX];
                     getcwd(cwd, sizeof(cwd));
                     char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
                     
-		            strcat(filename, cwd);
+	            strcat(filename, cwd);
                     strcat(filename, "/");
                     strcat(filename, path);
 
@@ -127,47 +118,33 @@ int main(int arc, char *argv){
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 printf("%s\n", cwd);
+		memset(cwd, 0, sizeof(cwd));
             }else if(command[0] == 'w' && command[1] == 'h' && command[2] == 'i' && command[3] == 'c' && command[4] == 'h' && command[5] == ' '){ //which
-        	    char path[PATH_MAX];
+        	char path[PATH_MAX];
                 memset(path, 0, sizeof(path));
                 int i = 6;
+
                 while(command[i]){
-		            //printf("Testing: %d\n", i);	
+<<<<<<< HEAD
+=======
+		    //printf("Testing: %d\n", i);	
+>>>>>>> 8989acd736ea6622db8b025a23f7170c20155d28
                     if (command[i] != 10) {
                         path[i - 6] = command[i];
-		            }
-		            i++;
+		    }
+		    i++;
                 }
-
-                /*
-                char cwd[PATH_MAX];
-                getcwd(cwd, sizeof(cwd));
-                char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
-                    
-		        strcat(filename, cwd);
-                strcat(filename, "/");
-                strcat(filename, path);
-                printf("This is a test print statement. Current filename = |%s|\n", filename);
-                if (access(filename, F_OK) != -1) {
-                    printf("%s exists within the current directory.\n", path);
-                    printf("%s\n", filename);
-                }
-                else {
-                    printf("Something went wrong. Filename: |%s|\n", filename)
-                }
-                free(filename);
-                memset(cwd, 0, sizeof(cwd));
-                memset(path, 0, sizeof(path));
-                */
 
                 char* result = where(path);
+
                 if (result == NULL) {
                     printf("%s wasn't found in any of the three directories.\n", path);
                 }
                 else {
                     printf("%s\n", result);
                 }
-                // free(result);
+
+                free(result);
             }else if(command[0] == 'e' && command[1] == 'x' && command[2] == 'i' && command[3] == 't' && command[4] <= 32){ //exit
                 printf("exiting");
                 int i = 4;
@@ -175,6 +152,7 @@ int main(int arc, char *argv){
                     printf("%c", command[i]);
                     i++;
                 }
+
                 return 0;
             }else{ //bare names & path names
                 int i = 0;
@@ -182,6 +160,7 @@ int main(int arc, char *argv){
                 int k = 0;
                 char arguments[10][40];
                 memset(arguments, 0, sizeof(arguments));
+                
                 while(command[i] != '\0'){
                     if(command[i] == ' '){
                         k = 0;
@@ -192,16 +171,16 @@ int main(int arc, char *argv){
                     }
                     i++;
                 }
-
-                //printf("%s", arguments[2]);
                 
                 char exec[PATH_MAX];
                 memset(exec, '\0', sizeof(exec));
                 char **args = malloc(9 * sizeof(char *));
                 args[0] = malloc(9 * 40 * sizeof(char));
+
                 for(int i = 1; i < 9; i++){
                     args[i] = args[0] + i * 40;
                 }
+
                 int x = 1;
 
                 for(int l = 0; l < 9; l++){
@@ -209,16 +188,15 @@ int main(int arc, char *argv){
                         if(arguments[l][0] == '.' && arguments[l][1] == '/'){
                             char file[PATH_MAX];
                             int i = 1;
+
                             while(arguments[l][i] != 10){
                                 file[i - 1] = arguments[l][i];
                                 i++;
                             }
-                            //printf("%s", file);
+
                             getcwd(exec, (sizeof(exec)));
-                            //printf("%s", exec);
                             strcat(exec, file);
                             exec[strlen(exec)] = '\0';
-                            //printf("%s", exec);
                         }else{
                             if(arguments[l][0] != '/'){
                                 if(arguments[l][strlen(arguments[l]) - 1] != 10){
@@ -226,20 +204,13 @@ int main(int arc, char *argv){
                                 }else{
                                     arguments[l][strlen(arguments[l]) - 1] = 0;
                                 }
-                                //arguments[l][strlen(arguments[l]) - 1] = 'b';
-                                //printf("%s", arguments[l]);
                                 sprintf(exec, "%s", where(arguments[l]));
-                                //printf("%s\n", exec);
                             }else{
                                 sprintf(exec, "%s", arguments[l]);
                             }
-                            //printf("%s\n", exec);
-                            
-                            //printf("%c\n", exec[strlen(exec) - 1]);
-                            //x++;
                         }
+
                         sprintf(args[0], "%s", exec);
-                        //printf("%s", exec);
                     }else{
                         for(int m = 0; m < strlen(arguments[l]); m++){
                             if(arguments[l][m] == '*'){
@@ -257,10 +228,10 @@ int main(int arc, char *argv){
                                 int result = glob(wildcard, 0, NULL, &globbuf);
                                 if(result == 0){
                                     for(int i = 0; i < globbuf.gl_pathc; i++){
-                                        //printf("%s\n", globbuf.gl_pathv[i]);
                                         sprintf(args[x], "%s", globbuf.gl_pathv[i]);
                                         x++;
                                     }
+
                                     globfree(&globbuf);
                                     break;
                                 }else{
@@ -270,16 +241,17 @@ int main(int arc, char *argv){
                                     }else{
                                         args[x][strlen(args[x]) - 1] = '\0';
                                     }
+
                                     x++;
                                 }
                             }else if(m == strlen(arguments[l] - 1)){
                                 sprintf(args[x], "%s", arguments[l]);
-                                //printf("%s ", args[x]);
                                 if(args[x][strlen(args[x]) - 1] != 10){
                                     args[x][strlen(args[x])] = '\0';
                                 }else{
                                     args[x][strlen(args[x]) - 1] = '\0';
                                 }
+
                                 x++;
                             }
                         }
@@ -290,9 +262,8 @@ int main(int arc, char *argv){
                 int out = 0;
                 char input[64];
                 char output[64];
-                //printf("%s", args[0]);
+
                 while(args[i][0] != '\0'){
-                    //printf("%s", args[i]);
                     if(strcmp(args[i], "<") == 0){
                         args[i] = NULL;
                         strcpy(input, args[i + 1]);
@@ -302,6 +273,7 @@ int main(int arc, char *argv){
                         strcpy(output, args[i + 1]);
                         out = 2;
                     }
+                    
                     i++;
                 }
 
@@ -315,8 +287,8 @@ int main(int arc, char *argv){
                             perror("Unable to read input file");
                             exit(0);
                         }
-                        dup2(fd0, STDIN_FILENO);
 
+                        dup2(fd0, STDIN_FILENO);
                         close(fd0);
                     }
 
@@ -328,13 +300,14 @@ int main(int arc, char *argv){
                             perror("Unable to open output file\n");
                             exit(0);
                         }
-                        dup2(fd1, STDOUT_FILENO);
 
+                        dup2(fd1, STDOUT_FILENO);
                         close(fd1);
                     }
                     if(execv(exec, args) == -1){
                         perror("execv failed");
                     }
+                    
                     dup2(terminal, STDOUT_FILENO);
                     close(terminal);
                     exit(0);
@@ -345,7 +318,6 @@ int main(int arc, char *argv){
                 memset(arguments, '\0', sizeof(arguments));
                 memset(exec, '\0', sizeof(exec));
                 free(args);
-                //free(exec);
             }
         }
     }else{ //batch mode
