@@ -177,7 +177,7 @@ int main(int arc, char *argv){
 		*/
                 return 0;
             }else{ //bare names
-                int i = 0;
+                 int i = 0;
                 int j = 0;
                 int k = 0;
                 char arguments[10][40];
@@ -215,8 +215,8 @@ int main(int arc, char *argv){
                             getcwd(exec, (sizeof(exec)));
                             //printf("%s", exec);
                             strcat(exec, file);
-                            //exec[strlen(exec)] = '\0';
-                            printf("%s", exec);
+                            exec[strlen(exec)] = '\0';
+                            //printf("%s", exec);
                         }else{
                             if(arguments[l][0] != '/'){
                                 if(arguments[l][strlen(arguments[l]) - 1] != 10){
@@ -305,6 +305,32 @@ int main(int arc, char *argv){
                     i++;
                 }
 
+                if(in){
+                    printf("in");
+                    int fd0;
+                    if((fd0 = open(input, O_RDONLY, 0)) < 0){
+                        perror("Unable to read input file");
+                        exit(0);
+                    }
+                    dup2(fd0, STDIN_FILENO);
+
+                    close(fd0);
+                    printf("suck");
+                }
+
+                int terminal = dup(STDOUT_FILENO);
+
+                if(out){
+                    int fd1;
+                    if((fd1 = creat(output, 0640)) < 0){
+                        perror("Unable to open output file\n");
+                        exit(0);
+                    }
+                    dup2(fd1, STDOUT_FILENO);
+
+                    close(fd1);
+                }
+
                 args[i] = NULL;
                 
                 int pid = fork();
@@ -316,6 +342,9 @@ int main(int arc, char *argv){
                 }else{
                     wait(NULL);
                 }
+
+                dup2(terminal, STDOUT_FILENO);
+                close(terminal);
                 
                 memset(arguments, '\0', sizeof(arguments));
                 memset(exec, '\0', sizeof(exec));
