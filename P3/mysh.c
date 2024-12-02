@@ -88,28 +88,28 @@ int main(int arc, char *argv){
                 char path[PATH_MAX];
                 int i = 3;
                 while(command[i]){
-		            //printf("Testing: %d\n", i);	
+		    //printf("Testing: %d\n", i);	
                     if (command[i] != 10) {
                         path[i - 3] = command[i];
                     }
-		            i++;
+		    i++;
                 }
                 printf("%s\n", path);
-		        if(path[0] == 47) { // The ascii value for backslash
+		if(path[0] == 47) { // The ascii value for backslash
                     if(chdir(path) == -1){
                         printf("cd: No such file or directory\n");
                     }else{
-		                //printf("Testing");
+		        //printf("Testing");
                         char cwd[PATH_MAX];
                         getcwd(cwd, sizeof(cwd));
                         printf("%s\n", cwd);
                     }
-		        }else{
-		            char cwd[PATH_MAX];
+	        }else{
+		    char cwd[PATH_MAX];
                     getcwd(cwd, sizeof(cwd));
                     char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
                     
-		            strcat(filename, cwd);
+	            strcat(filename, cwd);
                     strcat(filename, "/");
                     strcat(filename, path);
 
@@ -127,38 +127,18 @@ int main(int arc, char *argv){
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 printf("%s\n", cwd);
+		memset(cwd, 0, sizeof(cwd));
             }else if(command[0] == 'w' && command[1] == 'h' && command[2] == 'i' && command[3] == 'c' && command[4] == 'h' && command[5] == ' '){ //which
-        	    char path[PATH_MAX];
+        	char path[PATH_MAX];
                 memset(path, 0, sizeof(path));
                 int i = 6;
                 while(command[i]){
-		            //printf("Testing: %d\n", i);	
+		    //printf("Testing: %d\n", i);	
                     if (command[i] != 10) {
-                        path[i - 6] = command[i];
-		            }
-		            i++;
+                        path[i - 6] = command[I];
+		    }
+		    i++;
                 }
-
-                /*
-                char cwd[PATH_MAX];
-                getcwd(cwd, sizeof(cwd));
-                char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
-                    
-		        strcat(filename, cwd);
-                strcat(filename, "/");
-                strcat(filename, path);
-                printf("This is a test print statement. Current filename = |%s|\n", filename);
-                if (access(filename, F_OK) != -1) {
-                    printf("%s exists within the current directory.\n", path);
-                    printf("%s\n", filename);
-                }
-                else {
-                    printf("Something went wrong. Filename: |%s|\n", filename)
-                }
-                free(filename);
-                memset(cwd, 0, sizeof(cwd));
-                memset(path, 0, sizeof(path));
-                */
 
                 char* result = where(path);
                 if (result == NULL) {
