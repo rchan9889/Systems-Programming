@@ -73,10 +73,6 @@ int main(int arc, char *argv){
                 char path[PATH_MAX];
                 int i = 3;
                 while(command[i]){
-<<<<<<< HEAD
-=======
-		    //printf("Testing: %d\n", i);	
->>>>>>> 8989acd736ea6622db8b025a23f7170c20155d28
                     if (command[i] != 10) {
                         path[i - 3] = command[i];
                     }
@@ -87,10 +83,6 @@ int main(int arc, char *argv){
                     if(chdir(path) == -1){
                         printf("cd: No such file or directory\n");
                     }else{
-<<<<<<< HEAD
-=======
-		        //printf("Testing");
->>>>>>> 8989acd736ea6622db8b025a23f7170c20155d28
                         char cwd[PATH_MAX];
                         getcwd(cwd, sizeof(cwd));
                         printf("%s\n", cwd);
@@ -125,10 +117,6 @@ int main(int arc, char *argv){
                 int i = 6;
 
                 while(command[i]){
-<<<<<<< HEAD
-=======
-		    //printf("Testing: %d\n", i);	
->>>>>>> 8989acd736ea6622db8b025a23f7170c20155d28
                     if (command[i] != 10) {
                         path[i - 6] = command[i];
 		    }
