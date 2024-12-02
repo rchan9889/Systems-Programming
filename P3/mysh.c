@@ -177,7 +177,7 @@ int main(int arc, char *argv){
 		*/
                 return 0;
             }else{ //bare names
-                 int i = 0;
+                int i = 0;
                 int j = 0;
                 int k = 0;
                 char arguments[10][40];
@@ -192,6 +192,8 @@ int main(int arc, char *argv){
                     }
                     i++;
                 }
+
+                //printf("%s", arguments[2]);
                 
                 char exec[PATH_MAX];
                 memset(exec, '\0', sizeof(exec));
@@ -200,7 +202,7 @@ int main(int arc, char *argv){
                 for(int i = 1; i < 9; i++){
                     args[i] = args[0] + i * 40;
                 }
-                int x = 0;
+                int x = 1;
 
                 for(int l = 0; l < 9; l++){
                     if(l == 0){
@@ -234,11 +236,9 @@ int main(int arc, char *argv){
                             //printf("%s\n", exec);
                             
                             //printf("%c\n", exec[strlen(exec) - 1]);
-                            if(strstr(exec, "bin") != NULL){
-                                sprintf(args[0], "%s", exec);
-                                x++;
-                            }
+                            //x++;
                         }
+                        sprintf(args[0], "%s", exec);
                         //printf("%s", exec);
                     }else{
                         for(int m = 0; m < strlen(arguments[l]); m++){
@@ -274,7 +274,7 @@ int main(int arc, char *argv){
                                 }
                             }else if(m == strlen(arguments[l] - 1)){
                                 sprintf(args[x], "%s", arguments[l]);
-                                //printf("%s ", arguments[l]);
+                                //printf("%s ", args[x]);
                                 if(args[x][strlen(args[x]) - 1] != 10){
                                     args[x][strlen(args[x])] = '\0';
                                 }else{
@@ -290,7 +290,9 @@ int main(int arc, char *argv){
                 int out = 0;
                 char input[64];
                 char output[64];
+                //("%s", args[0]);
                 while(args[i][0] != '\0'){
+                    //printf("%s", args[i]);
                     if(strcmp(args[i], "<") == 0){
                         args[i] = NULL;
                         strcpy(input, args[i + 1]);
@@ -306,7 +308,6 @@ int main(int arc, char *argv){
                 }
 
                 if(in){
-                    printf("in");
                     int fd0;
                     if((fd0 = open(input, O_RDONLY, 0)) < 0){
                         perror("Unable to read input file");
@@ -315,7 +316,6 @@ int main(int arc, char *argv){
                     dup2(fd0, STDIN_FILENO);
 
                     close(fd0);
-                    printf("suck");
                 }
 
                 int terminal = dup(STDOUT_FILENO);
