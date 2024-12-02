@@ -25,19 +25,19 @@ char* where(char path[]) {
     strcat(dirThree, path);
     
     if (access(dirOne, F_OK) != -1) {
-   	    char* answerOne = malloc((15 + strlen(path) + 1) * sizeof(char));
-	    strcpy(answerOne, dirOne);
-	    return answerOne;
+   	char* answerOne = malloc((15 + strlen(path) + 1) * sizeof(char));
+	strcpy(answerOne, dirOne);
+	return answerOne;
     } else if (access(dirTwo, F_OK) != -1) {
         char* answerTwo = malloc((9 + strlen(path) + 1) * sizeof(char));
         strcpy(answerTwo, dirTwo);
-	    return answerTwo;
+	return answerTwo;
     } else if (access(dirThree, F_OK) != -1) {
         char* answerThree = malloc((5 + strlen(path) + 1) * sizeof(char));
         strcpy(answerThree, dirThree);
-	    return answerThree;
+	return answerThree;
     } else {
-	    return NULL;
+	return NULL;
     }
                    
 }
