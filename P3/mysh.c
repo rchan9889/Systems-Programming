@@ -248,12 +248,13 @@ int main(int arc, char *argv){
                 i = 0;
                 int in = 0;
                 int out = 0;
-                int pipe = 0;
+                int pip = 0;
                 char input[64];
                 char output[64];
                 char* potato;
                 char** potatoArgs;
 
+                char exec2[PATH_MAX];
                 while(args[i][0] != '\0'){
                     if(strcmp(args[i], "<") == 0){
                         args[i] = NULL;
@@ -266,10 +267,10 @@ int main(int arc, char *argv){
                     }else if (strcmp(args[i], "|") == 0) {
                         args[i] = NULL;
                         potato = malloc(40 * sizeof(char));
-                        potatoArgs = malloc((9 - i - 2) * sizeof(char*))
+                        potatoArgs = malloc((9 - i - 2) * sizeof(char*));
                         potatoArgs[0] = malloc((9 - i - 2) * 40 * sizeof(char));
                         strcpy(potato, args[i + 1]);
-                        strcpy(potatoArgs[0], args[i + 2])
+                        strcpy(potatoArgs[0], args[i + 2]);
                         for(int j = 1; j < (9 - i - 2); j++){
                             potatoArgs[j] = potatoArgs[0] + j * 40;
                             strcpy(potatoArgs[j], args[i + 2 + j]);
@@ -277,7 +278,7 @@ int main(int arc, char *argv){
                         
 
                         args = realloc(args, i * sizeof(char*));
-                        pipe = 2;
+                        pip = 2;
 
                         if(potato[0] == '.' && potato[1] == '/'){
                             char file2[PATH_MAX];
@@ -288,7 +289,6 @@ int main(int arc, char *argv){
                                 j++;
                             }
                             
-                            char exec2[PATH_MAX];
                             memset(exec2, '\0', sizeof(exec2));
                             getcwd(exec2, (sizeof(exec2)));
                             strcat(exec2, file2);
@@ -315,8 +315,8 @@ int main(int arc, char *argv){
                 args[i] = NULL;
                 
                 
-                if (pipe) {
-                    int p[2];
+                int p[2];
+                if (pip) {
                     if (pipe(p) < 0) { 
                         perror("Unable to create pipe"); 
                         exit(1); 
@@ -338,7 +338,7 @@ int main(int arc, char *argv){
                     }
 
                     int terminal = dup(STDOUT_FILENO);
-                    if (pipe) {
+                    if (pip) {
                         dup2(p[1], STDOUT_FILENO);
                         // close(p[0]); 
                         close(p[1]);  
