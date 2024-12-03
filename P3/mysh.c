@@ -25,21 +25,20 @@ char* where(char path[]) {
     strcat(dirThree, path);
     
     if (access(dirOne, F_OK) != -1) {
-   	char* answerOne = malloc((15 + strlen(path) + 1) * sizeof(char));
-	strcpy(answerOne, dirOne);
-	return answerOne;
+   	    char* answerOne = malloc((15 + strlen(path) + 1) * sizeof(char));
+	    strcpy(answerOne, dirOne);
+	    return answerOne;
     } else if (access(dirTwo, F_OK) != -1) {
         char* answerTwo = malloc((9 + strlen(path) + 1) * sizeof(char));
         strcpy(answerTwo, dirTwo);
-	return answerTwo;
+	    return answerTwo;
     } else if (access(dirThree, F_OK) != -1) {
         char* answerThree = malloc((5 + strlen(path) + 1) * sizeof(char));
         strcpy(answerThree, dirThree);
-	return answerThree;
+	    return answerThree;
     } else {
-	return NULL;
+	    return NULL;
     }
-                   
 }
 
 int main(int arc, char *argv){
@@ -76,10 +75,10 @@ int main(int arc, char *argv){
                     if (command[i] != 10) {
                         path[i - 3] = command[i];
                     }
-		    i++;
+		            i++;
                 }
                 printf("%s\n", path);
-		if(path[0] == 47) { // The ascii value for backslash
+		        if(path[0] == 47) { // The ascii value for backslash
                     if(chdir(path) == -1){
                         printf("cd: No such file or directory\n");
                     }else{
@@ -87,12 +86,12 @@ int main(int arc, char *argv){
                         getcwd(cwd, sizeof(cwd));
                         printf("%s\n", cwd);
                     }
-	        }else{
-		    char cwd[PATH_MAX];
+		        }else{
+		            char cwd[PATH_MAX];
                     getcwd(cwd, sizeof(cwd));
                     char *filename = malloc(sizeof(cwd) + 1 + sizeof(path) + 1); // blah/blah + / + testfile + \0
                     
-	            strcat(filename, cwd);
+		            strcat(filename, cwd);
                     strcat(filename, "/");
                     strcat(filename, path);
 
@@ -110,17 +109,16 @@ int main(int arc, char *argv){
                 char cwd[PATH_MAX];
                 getcwd(cwd, sizeof(cwd));
                 printf("%s\n", cwd);
-		memset(cwd, 0, sizeof(cwd));
             }else if(command[0] == 'w' && command[1] == 'h' && command[2] == 'i' && command[3] == 'c' && command[4] == 'h' && command[5] == ' '){ //which
-        	char path[PATH_MAX];
+        	    char path[PATH_MAX];
                 memset(path, 0, sizeof(path));
                 int i = 6;
 
                 while(command[i]){
                     if (command[i] != 10) {
                         path[i - 6] = command[i];
-		    }
-		    i++;
+		            }
+		            i++;
                 }
 
                 char* result = where(path);
@@ -249,12 +247,19 @@ int main(int arc, char *argv){
                 int in = 0;
                 int out = 0;
                 int pip = 0;
+                int out2 = 0;
+
                 char input[64];
                 char output[64];
-                char* potato;
-                char** potatoArgs;
-
                 char exec2[PATH_MAX];
+                char **argp = malloc(9 * sizeof(char *));
+                argp[0] = malloc(9 * 40 * sizeof(char));
+                int fd[2];
+
+                for(int i = 1; i < 9; i++){
+                    argp[i] = argp[0] + i * 40;
+                } 
+
                 while(args[i][0] != '\0'){
                     if(strcmp(args[i], "<") == 0){
                         args[i] = NULL;
@@ -264,102 +269,75 @@ int main(int arc, char *argv){
                         args[i] = NULL;
                         strcpy(output, args[i + 1]);
                         out = 2;
-                    }else if (strcmp(args[i], "|") == 0) {
+                    }else if(strcmp(args[i], "|") == 0){
                         args[i] = NULL;
-                        potato = malloc(40 * sizeof(char));
-                        potatoArgs = malloc((9 - i - 2) * sizeof(char*));
-                        potatoArgs[0] = malloc((9 - i - 2) * 40 * sizeof(char));
-                        strcpy(potato, args[i + 1]);
-                        strcpy(potatoArgs[0], args[i + 2]);
-                        for(int j = 1; j < (9 - i - 2); j++){
-                            potatoArgs[j] = potatoArgs[0] + j * 40;
-                            strcpy(potatoArgs[j], args[i + 2 + j]);
-                        }
                         
-
-                        args = realloc(args, i * sizeof(char*));
-                        pip = 2;
-
-                        if(potato[0] == '.' && potato[1] == '/'){
-                            char file2[PATH_MAX];
-                            int j = 1;
-
-                            while(potato[j] != 10){
-                                file2[j - 1] = potato[j];
-                                j++;
-                            }
-                            
-                            memset(exec2, '\0', sizeof(exec2));
-                            getcwd(exec2, (sizeof(exec2)));
-                            strcat(exec2, file2);
-                            exec[strlen(exec2)] = '\0';
-                        }else{
-                            if(potato[0] != '/'){
-                                if(potato[strlen(potato) - 1] != 10){
-                                    potato[strlen(potato)] = 0;
-                                }else{
-                                    potato[strlen(potato) - 1] = 0;
-                                }
-                                sprintf(exec2, "%s", where(potato));
-                            }else{
-                                sprintf(exec2, "%s", potato);
-                            }
+                        for(int v = i + 1; args[v][0] != '\0'; v++){
+                            strcpy(argp[v - (i + 1)], args[v]);
+                            //printf("%i: %s, ", v, args[v]);
+                            args[v] = NULL;
                         }
-
-                        sprintf(potato, "%s", exec2);
+                        pip = 2;
+                        break;
                     }
                     
                     i++;
                 }
 
-                args[i] = NULL;
-                
-                
-                int p[2];
-                if (pip) {
-                    if (pipe(p) < 0) { 
-                        perror("Unable to create pipe"); 
-                        exit(1); 
-                    } 
-                        
+                if(pip){
+                    int v = 0;
+
+                    while(argp[v][0] != '\0'){
+                        if(strcmp(argp[v], ">") == 0){
+                            argp[v] = NULL;
+                            strcpy(output, argp[v + 1]);
+                            out2 = 2;
+                        }
+
+                        v++;
+                    }
+
+                    argp[v] = NULL;
+
+                    if(argp[0][0] == '.' && argp[0][1] == '/'){
+                        char file[PATH_MAX];
+                        int p = 1;
+
+                        while(argp[0][p] != '\0'){
+                            file[p - 1] = argp[0][p];
+                            p++;
+                        }
+                        getcwd(exec2, sizeof(exec2));
+                        strcat(exec2, file);
+                        exec2[strlen(exec2)] = '\0';
+                    }else{
+                        sprintf(exec2, "%s", where(argp[0]));
+                    }
+                    sprintf(argp[0], "%s", exec2);
                 }
 
+                args[i] = NULL;
+
+                if(pip){
+                    if(pipe(fd) == -1){
+                        perror("Unable to create pipe");
+                        exit(1);
+                    }
+                }
+                
                 int pid = fork();
-                if(pid == 0){    
-                    if(in){
-                        int fd0;
-                        if((fd0 = open(input, O_RDONLY, 0)) < 0){
-                            perror("Unable to read input file");
-                            exit(0);
-                        }
+                if(pid == 0){   
+                    if(pip){
+                        close(fd[0]);
 
-                        dup2(fd0, STDIN_FILENO);
-                        close(fd0);
-                    }
+                        dup2(fd[1], STDOUT_FILENO);
 
-                    int terminal = dup(STDOUT_FILENO);
-                    if (pip) {
-                        dup2(p[1], STDOUT_FILENO);
-                        // close(p[0]); 
-                        close(p[1]);  
-                    } else if(out){
-                        int fd1;
-                        if((fd1 = creat(output, 0640)) < 0){
-                            perror("Unable to open output file\n");
-                            exit(0);
-                        }
+                        close(fd[1]);
 
-                        dup2(fd1, STDOUT_FILENO);
-                        close(fd1);
-                    }
-
-                    if(execv(exec, args) == -1){
-                        perror("execv failed");
-                    }
-                    if (pipe) {
-                        dup2(p[0], STDIN_FILENO);
-                        close(p[0]);
-                        if (out) {
+                        int terminal = dup(STDOUT_FILENO);
+                        
+                        if(out2){
+                        
                             int fd1;
                             if((fd1 = creat(output, 0640)) < 0){
                                 perror("Unable to open output file\n");
@@ -369,25 +347,65 @@ int main(int arc, char *argv){
                             dup2(fd1, STDOUT_FILENO);
                             close(fd1);
                         }
-                        else {
-                            dup2(terminal, STDOUT_FILENO);
-                            close(terminal);
+
+                        if(execv(exec, args) == -1){
+                            perror("execv failed");
                         }
-                        if (execv(exec2, potatoArgs) == -1){
-                            perror("execv #2 failed");
+
+                        dup2(terminal, STDOUT_FILENO);
+                        close(terminal);
+                        //exit(0);
+                    }else{
+                        if(in){
+                            int fd0;
+                            if((fd0 = open(input, O_RDONLY, 0)) < 0){
+                                perror("Unable to read input file");
+                                exit(0);
+                            }
+
+                            dup2(fd0, STDIN_FILENO);
+                            close(fd0);
                         }
+
+                        int terminal = dup(STDOUT_FILENO);
+                        
+                        if(out){
+                            int fd1;
+                            if((fd1 = creat(output, 0640)) < 0){
+                                perror("Unable to open output file\n");
+                                exit(0);
+                            }
+
+                            dup2(fd1, STDOUT_FILENO);
+                            close(fd1);
+                        }
+                        if(execv(exec, args) == -1){
+                            perror("execv failed");
+                        }
+
+                        dup2(terminal, STDOUT_FILENO);
+                        close(terminal);
+                        exit(0);
                     }
-                    
-                    dup2(terminal, STDOUT_FILENO);
-                    close(terminal);
-                    exit(0);
-                }else{
+                }else if(pid > 0){
                     wait(NULL);
+                    if(pip){
+                        close(fd[1]);
+
+                        dup2(fd[0], STDIN_FILENO);
+                        close(fd[0]);
+
+                        if(execv(exec2, argp) == -1){
+                            perror("execv failed");
+                        }
+                        //exit(0);
+                    }
                 }
                 
                 memset(arguments, '\0', sizeof(arguments));
                 memset(exec, '\0', sizeof(exec));
                 free(args);
+                free(argp);
             }
         }
     }else{ //batch mode
