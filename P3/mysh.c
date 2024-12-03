@@ -248,8 +248,11 @@ int main(int arc, char *argv){
                 i = 0;
                 int in = 0;
                 int out = 0;
+                int pipe = 0;
                 char input[64];
                 char output[64];
+                char* potato;
+                char** potatoArgs;
 
                 while(args[i][0] != '\0'){
                     if(strcmp(args[i], "<") == 0){
@@ -260,6 +263,50 @@ int main(int arc, char *argv){
                         args[i] = NULL;
                         strcpy(output, args[i + 1]);
                         out = 2;
+                    }else if (strcmp(args[i], "|") == 0) {
+                        args[i] = NULL;
+                        potato = malloc(40 * sizeof(char));
+                        potatoArgs = malloc((9 - i - 2) * sizeof(char*))
+                        potatoArgs[0] = malloc((9 - i - 2) * 40 * sizeof(char));
+                        strcpy(potato, args[i + 1]);
+                        strcpy(potatoArgs[0], args[i + 2])
+                        for(int j = 1; j < (9 - i - 2); j++){
+                            potatoArgs[j] = potatoArgs[0] + j * 40;
+                            strcpy(potatoArgs[j], args[i + 2 + j]);
+                        }
+                        
+
+                        args = realloc(args, i * sizeof(char*));
+                        pipe = 2;
+
+                        if(potato[0] == '.' && potato[1] == '/'){
+                            char file2[PATH_MAX];
+                            int j = 1;
+
+                            while(potato[j] != 10){
+                                file2[j - 1] = potato[j];
+                                j++;
+                            }
+                            
+                            char exec2[PATH_MAX];
+                            memset(exec2, '\0', sizeof(exec2));
+                            getcwd(exec2, (sizeof(exec2)));
+                            strcat(exec2, file2);
+                            exec[strlen(exec2)] = '\0';
+                        }else{
+                            if(potato[0] != '/'){
+                                if(potato[strlen(potato) - 1] != 10){
+                                    potato[strlen(potato)] = 0;
+                                }else{
+                                    potato[strlen(potato) - 1] = 0;
+                                }
+                                sprintf(exec2, "%s", where(potato));
+                            }else{
+                                sprintf(exec2, "%s", potato);
+                            }
+                        }
+
+                        sprintf(potato, "%s", exec2);
                     }
                     
                     i++;
@@ -267,6 +314,16 @@ int main(int arc, char *argv){
 
                 args[i] = NULL;
                 
+                
+                if (pipe) {
+                    int p[2];
+                    if (pipe(p) < 0) { 
+                        perror("Unable to create pipe"); 
+                        exit(1); 
+                    } 
+                        
+                }
+
                 int pid = fork();
                 if(pid == 0){    
                     if(in){
@@ -281,8 +338,11 @@ int main(int arc, char *argv){
                     }
 
                     int terminal = dup(STDOUT_FILENO);
-                    
-                    if(out){
+                    if (pipe) {
+                        dup2(p[1], STDOUT_FILENO);
+                        // close(p[0]); 
+                        close(p[1]);  
+                    } else if(out){
                         int fd1;
                         if((fd1 = creat(output, 0640)) < 0){
                             perror("Unable to open output file\n");
@@ -292,8 +352,30 @@ int main(int arc, char *argv){
                         dup2(fd1, STDOUT_FILENO);
                         close(fd1);
                     }
+
                     if(execv(exec, args) == -1){
                         perror("execv failed");
+                    }
+                    if (pipe) {
+                        dup2(p[0], STDIN_FILENO);
+                        close(p[0]);
+                        if (out) {
+                            int fd1;
+                            if((fd1 = creat(output, 0640)) < 0){
+                                perror("Unable to open output file\n");
+                                exit(0);
+                            }
+
+                            dup2(fd1, STDOUT_FILENO);
+                            close(fd1);
+                        }
+                        else {
+                            dup2(terminal, STDOUT_FILENO);
+                            close(terminal);
+                        }
+                        if (execv(exec2, potatoArgs) == -1){
+                            perror("execv #2 failed");
+                        }
                     }
                     
                     dup2(terminal, STDOUT_FILENO);
